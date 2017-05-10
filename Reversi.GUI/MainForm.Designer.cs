@@ -97,6 +97,7 @@
             this.toolStripButton1.Name = "toolStripButton1";
             this.toolStripButton1.Size = new System.Drawing.Size(24, 22);
             this.toolStripButton1.Text = "新";
+            this.toolStripButton1.ToolTipText = "新規対局";
             this.toolStripButton1.Click += new System.EventHandler(this.newButton_Click);
             // 
             // toolStripButton2
@@ -107,6 +108,7 @@
             this.toolStripButton2.Name = "toolStripButton2";
             this.toolStripButton2.Size = new System.Drawing.Size(24, 22);
             this.toolStripButton2.Text = "開";
+            this.toolStripButton2.ToolTipText = "記録を開く";
             // 
             // toolStripButton3
             // 
@@ -116,6 +118,7 @@
             this.toolStripButton3.Name = "toolStripButton3";
             this.toolStripButton3.Size = new System.Drawing.Size(24, 22);
             this.toolStripButton3.Text = "保";
+            this.toolStripButton3.ToolTipText = "記録を保存";
             // 
             // toolStripButton4
             // 
@@ -125,6 +128,7 @@
             this.toolStripButton4.Name = "toolStripButton4";
             this.toolStripButton4.Size = new System.Drawing.Size(24, 22);
             this.toolStripButton4.Text = "終";
+            this.toolStripButton4.ToolTipText = "閲覧モードを終了";
             // 
             // bindingNavigatorSeparator2
             // 

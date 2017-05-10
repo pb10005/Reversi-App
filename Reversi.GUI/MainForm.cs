@@ -74,6 +74,7 @@ namespace Reversi.GUI
         }
         private void Init()
         {
+            turnNum = 0;
             board = ReversiBoard.InitBoard();
             RefreshPanel();
             inGame = true;

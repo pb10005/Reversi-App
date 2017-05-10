@@ -8,7 +8,7 @@ namespace Reversi.Core
 {
     /// <summary>
     /// 黒と白それぞれについて、駒の有無を1と0で表すと
-    /// 盤全体を64ビットで表現できる。
+    /// 盤全体を64ビット整数で表現できる。
     /// 参考: Wikipedia オセロにおけるビットボード
     ///     　Wikipedia ビット演算
     /// </summary>
@@ -25,6 +25,7 @@ namespace Reversi.Core
         {
             var res = new ReversiBoard()
             {
+                //オセロの初期状態
                 black = 0x0000000810000000,
                 white = 0x0000001008000000
             };
@@ -78,6 +79,13 @@ namespace Reversi.Core
             }
             return res;
         }
+        /// <summary>
+        /// 石を打つ
+        /// </summary>
+        /// <param name="row"></param>
+        /// <param name="col"></param>
+        /// <param name="player"></param>
+        /// <returns></returns>
         public ReversiBoard AddStone(int row,int col,StoneType player)
         {
             this.player = player;
@@ -100,7 +108,6 @@ namespace Reversi.Core
             }
             ulong mov = (ulong) 1 << (8 * row + col);
             var rev = Reverse(pl, opp, mov, Right) |
-                        Reverse(pl, opp, mov, Right) |
                         Reverse(pl, opp, mov, Left) |
                         Reverse(pl, opp, mov, Up) |
                         Reverse(pl, opp, mov, Down) |
