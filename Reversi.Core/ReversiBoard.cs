@@ -113,7 +113,7 @@ namespace Reversi.Core
             {
                 for (int col = 0; col < 8; col++)
                 {
-                    switch(BlackToMat()[row, col])
+                    switch(BlackToMat()[7-row, 7-col])
                     {
                         case true:
                             res += "1";
@@ -139,7 +139,7 @@ namespace Reversi.Core
             {
                 for (int col = 0; col < 8; col++)
                 {
-                    switch (WhiteToMat()[row, col])
+                    switch (WhiteToMat()[7-row, 7-col])
                     {
                         case true:
                             res += "1";

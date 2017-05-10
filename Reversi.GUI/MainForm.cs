@@ -40,14 +40,11 @@ namespace Reversi.GUI
                 }
             }
         }
-        private void newButton_Click(object sender, EventArgs e)
-        {
-            Init();
-        }
         private void Init()
         {
             turnNum = 0;
             board = ReversiBoard.InitBoard();
+            record = MatchRecord.Empty();
             RefreshTurnLabel();
             RefreshPanel();
             inGame = true;
@@ -93,6 +90,10 @@ namespace Reversi.GUI
         #endregion
 
         #region 対局
+        private void newButton_Click(object sender, EventArgs e)
+        {
+            Init();
+        }
         private async void Add(int row, int col)
         {
             if (!inGame)
@@ -110,6 +111,7 @@ namespace Reversi.GUI
                 {
                     board = board.AddStone(row, col, StoneType.Sente);
                     blocks[row, col].ToBlack(); //仮に打つ
+                    record.Boards.Add(board);
                 }
                 catch (ArgumentException)
                 {
@@ -122,7 +124,7 @@ namespace Reversi.GUI
                 {
                     board = board.AddStone(row, col, StoneType.Gote);
                     blocks[row, col].ToWhite(); //仮に打つ
-
+                    record.Boards.Add(board);
                 }
                 catch (ArgumentException)
                 {
@@ -132,7 +134,6 @@ namespace Reversi.GUI
             await Task.Delay(500); //500ms待ってから裏返す
             RefreshPanel();
             RefreshTurnLabel();
-            record.Boards.Add(board);
             if (turnNum >= 60)
             {
                 MessageBox.Show(board.ResultString(), "結果");
