@@ -140,6 +140,45 @@ namespace Reversi.Core
                 throw new ArgumentException("非合法手です");
             }
         }
+        /// <summary>
+        /// 結果を文字列で返す
+        /// </summary>
+        /// <returns></returns>
+        public string ResultString()
+        {
+            var countBlack = 0;
+            var countWhite = 0;
+            var result = "";
+            foreach(var stoneExists in BlackToMat())
+            {
+                if (stoneExists)
+                {
+                    countBlack += 1;
+                }
+            }
+            foreach (var stoneExists in WhiteToMat())
+            {
+                if (stoneExists)
+                {
+                    countWhite += 1;
+                }
+            }
+            if (countBlack == countWhite)
+            {
+                result = "引き分け";
+            }
+            else if (countBlack > countWhite)
+            {
+                result = "黒の勝ち";
+            }
+            else
+            {
+                result = "白の勝ち";
+            }
+            return string.Format("黒: {0} 白: {1}\n{2}", countBlack, countWhite, result);
+        }
+
+
         private ulong Reverse(ulong player,ulong opposite,ulong mov,Func<ulong,ulong>transfer)
         {
             ulong rev = 0;
