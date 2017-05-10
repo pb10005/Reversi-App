@@ -8,7 +8,7 @@ namespace Reversi.Core
 {
     /// <summary>
     /// 黒と白それぞれについて、駒の有無を1と0で表すと
-    /// 盤全体を64ビット整数で表現できる。
+    /// 盤全体を符号なし64ビット整数で表現できる。
     /// 参考: Wikipedia オセロにおけるビットボード
     ///     　Wikipedia ビット演算
     /// </summary>
@@ -23,7 +23,7 @@ namespace Reversi.Core
 
         }
         /// <summary>
-        /// 64バイト整数から盤を生成
+        /// 符号なし64ビット整数から盤を生成
         /// </summary>
         /// <param name="black"></param>
         /// <param name="white"></param>
