@@ -107,17 +107,17 @@ namespace Reversi.Core
                     break;
             }
             ulong mov = (ulong) 1 << (8 * row + col);
-            var rev = Reverse(pl, opp, mov, Right) |
-                        Reverse(pl, opp, mov, Left) |
-                        Reverse(pl, opp, mov, Up) |
-                        Reverse(pl, opp, mov, Down) |
-                        Reverse(pl, opp, mov, UpRight) |
-                        Reverse(pl, opp, mov, UpLeft) |
-                        Reverse(pl, opp, mov, DownRight) |
-                        Reverse(pl, opp, mov, DownLeft);
+            var rev = Reverse(pl, opp, mov, Right) 
+                        |Reverse(pl, opp, mov, Left)
+                        |Reverse(pl, opp, mov, Up) 
+                        |Reverse(pl, opp, mov, Down)
+                        |Reverse(pl, opp, mov, UpRight)
+                        |Reverse(pl, opp, mov, UpLeft) 
+                        |Reverse(pl, opp, mov, DownRight)
+                        |Reverse(pl, opp, mov, DownLeft);
             if (rev != 0)
             {
-                pl ^= mov|rev;
+                pl  ^= mov | rev;
                 opp ^= rev;
                 ReversiBoard board = new ReversiBoard();
                 switch (player)

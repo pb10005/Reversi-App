@@ -53,7 +53,7 @@ namespace Reversi.GUI
                 {
                     board = board.AddStone(row, col, StoneType.Sente);
                 }
-                catch
+                catch(ArgumentException)
                 {
                     turnNum--;
                 }
@@ -65,7 +65,7 @@ namespace Reversi.GUI
                     board = board.AddStone(row, col, StoneType.Gote);
 
                 }
-                catch
+                catch(ArgumentException)
                 {
                     turnNum--;
                 }
