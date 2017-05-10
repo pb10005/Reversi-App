@@ -19,9 +19,13 @@ namespace Reversi.GUI
             InitializeComponent();
         }
         bool inGame = false;
+        bool inPlayback = false;
         int turnNum = 0;
         Block[,] blocks = new Block[8, 8];
+        MatchRecord record = MatchRecord.Empty();
         ReversiBoard board = new ReversiBoard();
+        
+        #region 初期化
         private void Form1_Load(object sender, EventArgs e)
         {
             //マス目を追加
@@ -36,49 +40,9 @@ namespace Reversi.GUI
                 }
             }
         }
-        private async void Add(int row,int col)
+        private void newButton_Click(object sender, EventArgs e)
         {
-            if (!inGame)
-            {
-                return;
-            }
-            if (blocks[row,col].State != StoneType.None)
-            {
-                return;
-            }
-            turnNum++;
-            if (turnNum % 2 == 1)
-            {
-                try
-                {
-                    board = board.AddStone(row, col, StoneType.Sente);
-                    blocks[row, col].ToBlack(); //仮に打つ
-                }
-                catch (ArgumentException)
-                {
-                    turnNum--;
-                }
-            }
-            else
-            {
-                try
-                {
-                    board = board.AddStone(row, col, StoneType.Gote);
-                    blocks[row, col].ToWhite(); //仮に打つ
-
-                }
-                catch(ArgumentException)
-                {
-                    turnNum--;
-                }
-            }
-            await Task.Delay(500); //500ms待ってから裏返す
-            RefreshPanel();
-            RefreshTurnLabel();
-            if (turnNum >= 60)
-            {
-                MessageBox.Show(board.ResultString(),"結果");
-            }
+            Init();
         }
         private void Init()
         {
@@ -87,7 +51,11 @@ namespace Reversi.GUI
             RefreshTurnLabel();
             RefreshPanel();
             inGame = true;
+            inPlayback = false;
         }
+        #endregion
+
+        #region ビューの更新
         private void RefreshTurnLabel()
         {
             var text = "";
@@ -122,13 +90,55 @@ namespace Reversi.GUI
                 }
             }
         }
+        #endregion
 
-        private void newButton_Click(object sender, EventArgs e)
+        #region 対局
+        private async void Add(int row, int col)
         {
-            Init();
-        }
+            if (!inGame)
+            {
+                return;
+            }
+            if (blocks[row, col].State != StoneType.None)
+            {
+                return;
+            }
+            turnNum++;
+            if (turnNum % 2 == 1)
+            {
+                try
+                {
+                    board = board.AddStone(row, col, StoneType.Sente);
+                    blocks[row, col].ToBlack(); //仮に打つ
+                }
+                catch (ArgumentException)
+                {
+                    turnNum--;
+                }
+            }
+            else
+            {
+                try
+                {
+                    board = board.AddStone(row, col, StoneType.Gote);
+                    blocks[row, col].ToWhite(); //仮に打つ
 
-        private void toolStripButton5_Click(object sender, EventArgs e)
+                }
+                catch (ArgumentException)
+                {
+                    turnNum--;
+                }
+            }
+            await Task.Delay(500); //500ms待ってから裏返す
+            RefreshPanel();
+            RefreshTurnLabel();
+            record.Boards.Add(board);
+            if (turnNum >= 60)
+            {
+                MessageBox.Show(board.ResultString(), "結果");
+            }
+        }
+        private void surrenderButton_Click(object sender, EventArgs e)
         {
             if (inGame)
             {
@@ -136,6 +146,69 @@ namespace Reversi.GUI
                 MessageBox.Show(board.ResultString(), "結果");
             }
         }
+        #endregion
+
+        #region ファイルIO
+        private void saveButton_Click(object sender, EventArgs e)
+        {
+            var dialog = new SaveFileDialog()
+            {
+                Filter = "REVファイル|*.rev|すべてのファイル|*.*"
+            };
+            if(dialog.ShowDialog()==DialogResult.OK)
+            {
+                record.ToFile(dialog.FileName);
+            }
+        }
+
+        private void openButton_Click(object sender, EventArgs e)
+        {
+            var dialog = new OpenFileDialog()
+            {
+                Filter = "REVファイル|*.rev|すべてのファイル|*.*"
+            };
+            if (dialog.ShowDialog() == DialogResult.OK)
+            {
+                try
+                {
+                    record = MatchRecord.FromFile(dialog.FileName);
+                    var source = new BindingSource();
+                    source.DataSource = record.Boards;
+                    bindingNavigator1.BindingSource = source;
+                    turnNum = Convert.ToInt32(bindingNavigatorPositionItem.Text);
+                    board = record.Boards[turnNum - 1];
+                    RefreshTurnLabel();
+                    RefreshPanel();
+                    inPlayback = true;
+                }
+                catch
+                {
+                    MessageBox.Show("ファイルが不正です。");
+                }
+            }
+        }
+        #endregion
+
+        #region 閲覧モード
+        private void moveButton_Click(object sender, EventArgs e)
+        {
+            if (inPlayback)
+            {
+                turnNum = Convert.ToInt32(bindingNavigatorPositionItem.Text);
+                board = record.Boards[turnNum - 1];
+                RefreshPanel();
+                RefreshTurnLabel();
+            }
+        }
+
+        private void endViewButton_Click(object sender, EventArgs e)
+        {
+            if (inPlayback)
+            {
+                Init();
+            }
+        }
+        #endregion
 
         private void 終了XToolStripMenuItem_Click(object sender, EventArgs e)
         {

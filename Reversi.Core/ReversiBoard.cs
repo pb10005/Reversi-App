@@ -14,11 +14,27 @@ namespace Reversi.Core
     /// </summary>
     public class ReversiBoard
     {
-        ulong black = 0;
-        ulong white = 0;
-        StoneType player;
+        #region 初期化
         /// <summary>
-        /// オセロの初期状態を返す
+        /// 空の盤を生成
+        /// </summary>
+        public ReversiBoard()
+        {
+
+        }
+        /// <summary>
+        /// 64バイト整数から盤を生成
+        /// </summary>
+        /// <param name="black"></param>
+        /// <param name="white"></param>
+        public ReversiBoard(ulong black,ulong white)
+        {
+            this.black = black;
+            this.white = white;
+        }
+        
+        /// <summary>
+        /// オセロの初期状態として盤を生成
         /// </summary>
         /// <returns></returns>
         public static ReversiBoard InitBoard()
@@ -31,6 +47,13 @@ namespace Reversi.Core
             };
             return res;
         }
+        #endregion
+
+        ulong black = 0;
+        ulong white = 0;
+        StoneType player = StoneType.None;
+
+        #region 出力
         /// <summary>
         /// 黒のbitboardを、boolの2次元配列に変換して返す
         /// </summary>
@@ -79,6 +102,99 @@ namespace Reversi.Core
             }
             return res;
         }
+        /// <summary>
+        /// 黒のbitboardを、2進数に変換して返す
+        /// </summary>
+        /// <returns></returns>
+        public string BlackToBitString()
+        {
+            var res = "";
+            for (int row = 0; row < 8; row++)
+            {
+                for (int col = 0; col < 8; col++)
+                {
+                    switch(BlackToMat()[row, col])
+                    {
+                        case true:
+                            res += "1";
+                            break;
+                        case false:
+                            res += "0";
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+            return res;
+        }
+        /// <summary>
+        /// 白のbitboardを、2進数に変換して返す
+        /// </summary>
+        /// <returns></returns>
+        public string WhiteToBitString()
+        {
+            var res = "";
+            for (int row = 0; row < 8; row++)
+            {
+                for (int col = 0; col < 8; col++)
+                {
+                    switch (WhiteToMat()[row, col])
+                    {
+                        case true:
+                            res += "1";
+                            break;
+                        case false:
+                            res += "0";
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+            return res;
+        }
+        /// <summary>
+        /// 対局結果を文字列で返す
+        /// </summary>
+        /// <returns></returns>
+        public string ResultString()
+        {
+
+            var countBlack = 0;
+            var countWhite = 0;
+            var result = "";
+            foreach (var stoneExists in BlackToMat())
+            {
+                if (stoneExists)
+                {
+                    countBlack += 1;
+                }
+            }
+            foreach (var stoneExists in WhiteToMat())
+            {
+                if (stoneExists)
+                {
+                    countWhite += 1;
+                }
+            }
+            if (countBlack == countWhite)
+            {
+                result = "引き分け";
+            }
+            else if (countBlack > countWhite)
+            {
+                result = "黒の勝ち";
+            }
+            else
+            {
+                result = "白の勝ち";
+            }
+            return string.Format("黒: {0} 白: {1}\n{2}", countBlack, countWhite, result);
+        }
+        #endregion
+
+        #region 石を打つ
         /// <summary>
         /// 石を打つ
         /// </summary>
@@ -140,45 +256,6 @@ namespace Reversi.Core
                 throw new ArgumentException("非合法手です");
             }
         }
-        /// <summary>
-        /// 結果を文字列で返す
-        /// </summary>
-        /// <returns></returns>
-        public string ResultString()
-        {
-            var countBlack = 0;
-            var countWhite = 0;
-            var result = "";
-            foreach(var stoneExists in BlackToMat())
-            {
-                if (stoneExists)
-                {
-                    countBlack += 1;
-                }
-            }
-            foreach (var stoneExists in WhiteToMat())
-            {
-                if (stoneExists)
-                {
-                    countWhite += 1;
-                }
-            }
-            if (countBlack == countWhite)
-            {
-                result = "引き分け";
-            }
-            else if (countBlack > countWhite)
-            {
-                result = "黒の勝ち";
-            }
-            else
-            {
-                result = "白の勝ち";
-            }
-            return string.Format("黒: {0} 白: {1}\n{2}", countBlack, countWhite, result);
-        }
-
-
         private ulong Reverse(ulong player,ulong opposite,ulong mov,Func<ulong,ulong>transfer)
         {
             ulong rev = 0;
@@ -196,6 +273,9 @@ namespace Reversi.Core
             else
                 return rev; // 反転パターン
         }
+        #endregion
+        
+        #region 探索箇所の移動
         private ulong Right(ulong m)
         {
             //右端から左端に進むことを避けるためにフィルターをかける
@@ -232,5 +312,6 @@ namespace Reversi.Core
         {
             return Down(Left(m));
         }
+        #endregion
     }
 }

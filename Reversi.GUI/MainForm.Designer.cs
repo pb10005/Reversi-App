@@ -33,6 +33,7 @@
             this.bindingNavigator1 = new System.Windows.Forms.BindingNavigator(this.components);
             this.bindingNavigatorCountItem = new System.Windows.Forms.ToolStripLabel();
             this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButton5 = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton2 = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton3 = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton4 = new System.Windows.Forms.ToolStripButton();
@@ -46,18 +47,17 @@
             this.bindingNavigatorMoveLastItem = new System.Windows.Forms.ToolStripButton();
             this.matchPanel = new System.Windows.Forms.TableLayoutPanel();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
-            this.toolStripButton5 = new System.Windows.Forms.ToolStripButton();
+            this.turnLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.ファイルFToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.新規作成NToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.開くOToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator = new System.Windows.Forms.ToolStripSeparator();
+            this.開くOToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.上書き保存SToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.終了XToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ツールTToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.オプションOToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.turnLabel = new System.Windows.Forms.ToolStripStatusLabel();
-            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             ((System.ComponentModel.ISupportInitialize)(this.bindingNavigator1)).BeginInit();
             this.bindingNavigator1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
@@ -115,6 +115,17 @@
             this.toolStripButton1.ToolTipText = "新規対局";
             this.toolStripButton1.Click += new System.EventHandler(this.newButton_Click);
             // 
+            // toolStripButton5
+            // 
+            this.toolStripButton5.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.toolStripButton5.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton5.Image")));
+            this.toolStripButton5.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButton5.Name = "toolStripButton5";
+            this.toolStripButton5.Size = new System.Drawing.Size(24, 22);
+            this.toolStripButton5.Text = "投";
+            this.toolStripButton5.ToolTipText = "投了";
+            this.toolStripButton5.Click += new System.EventHandler(this.surrenderButton_Click);
+            // 
             // toolStripButton2
             // 
             this.toolStripButton2.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
@@ -124,6 +135,7 @@
             this.toolStripButton2.Size = new System.Drawing.Size(24, 22);
             this.toolStripButton2.Text = "開";
             this.toolStripButton2.ToolTipText = "記録を開く";
+            this.toolStripButton2.Click += new System.EventHandler(this.openButton_Click);
             // 
             // toolStripButton3
             // 
@@ -134,6 +146,7 @@
             this.toolStripButton3.Size = new System.Drawing.Size(24, 22);
             this.toolStripButton3.Text = "保";
             this.toolStripButton3.ToolTipText = "記録を保存";
+            this.toolStripButton3.Click += new System.EventHandler(this.saveButton_Click);
             // 
             // toolStripButton4
             // 
@@ -144,6 +157,7 @@
             this.toolStripButton4.Size = new System.Drawing.Size(24, 22);
             this.toolStripButton4.Text = "終";
             this.toolStripButton4.ToolTipText = "閲覧モードを終了";
+            this.toolStripButton4.Click += new System.EventHandler(this.endViewButton_Click);
             // 
             // bindingNavigatorSeparator2
             // 
@@ -158,6 +172,7 @@
             this.bindingNavigatorMoveFirstItem.RightToLeftAutoMirrorImage = true;
             this.bindingNavigatorMoveFirstItem.Size = new System.Drawing.Size(23, 22);
             this.bindingNavigatorMoveFirstItem.Text = "最初に移動";
+            this.bindingNavigatorMoveFirstItem.Click += new System.EventHandler(this.moveButton_Click);
             // 
             // bindingNavigatorMovePreviousItem
             // 
@@ -167,6 +182,7 @@
             this.bindingNavigatorMovePreviousItem.RightToLeftAutoMirrorImage = true;
             this.bindingNavigatorMovePreviousItem.Size = new System.Drawing.Size(23, 22);
             this.bindingNavigatorMovePreviousItem.Text = "前に戻る";
+            this.bindingNavigatorMovePreviousItem.Click += new System.EventHandler(this.moveButton_Click);
             // 
             // bindingNavigatorSeparator
             // 
@@ -195,6 +211,7 @@
             this.bindingNavigatorMoveNextItem.RightToLeftAutoMirrorImage = true;
             this.bindingNavigatorMoveNextItem.Size = new System.Drawing.Size(23, 22);
             this.bindingNavigatorMoveNextItem.Text = "次に移動";
+            this.bindingNavigatorMoveNextItem.Click += new System.EventHandler(this.moveButton_Click);
             // 
             // bindingNavigatorMoveLastItem
             // 
@@ -204,6 +221,7 @@
             this.bindingNavigatorMoveLastItem.RightToLeftAutoMirrorImage = true;
             this.bindingNavigatorMoveLastItem.Size = new System.Drawing.Size(23, 22);
             this.bindingNavigatorMoveLastItem.Text = "最後に移動";
+            this.bindingNavigatorMoveLastItem.Click += new System.EventHandler(this.moveButton_Click);
             // 
             // matchPanel
             // 
@@ -242,16 +260,11 @@
             this.statusStrip1.TabIndex = 2;
             this.statusStrip1.Text = "statusStrip1";
             // 
-            // toolStripButton5
+            // turnLabel
             // 
-            this.toolStripButton5.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.toolStripButton5.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton5.Image")));
-            this.toolStripButton5.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButton5.Name = "toolStripButton5";
-            this.toolStripButton5.Size = new System.Drawing.Size(24, 22);
-            this.toolStripButton5.Text = "投";
-            this.toolStripButton5.ToolTipText = "投了";
-            this.toolStripButton5.Click += new System.EventHandler(this.toolStripButton5_Click);
+            this.turnLabel.Name = "turnLabel";
+            this.turnLabel.Size = new System.Drawing.Size(20, 18);
+            this.turnLabel.Text = "　";
             // 
             // menuStrip1
             // 
@@ -285,6 +298,12 @@
             this.新規作成NToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.P)));
             this.新規作成NToolStripMenuItem.Size = new System.Drawing.Size(201, 22);
             this.新規作成NToolStripMenuItem.Text = "新規対局(&N)";
+            this.新規作成NToolStripMenuItem.Click += new System.EventHandler(this.newButton_Click);
+            // 
+            // toolStripSeparator
+            // 
+            this.toolStripSeparator.Name = "toolStripSeparator";
+            this.toolStripSeparator.Size = new System.Drawing.Size(198, 6);
             // 
             // 開くOToolStripMenuItem
             // 
@@ -294,11 +313,7 @@
             this.開くOToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
             this.開くOToolStripMenuItem.Size = new System.Drawing.Size(201, 22);
             this.開くOToolStripMenuItem.Text = "開く(&O)";
-            // 
-            // toolStripSeparator
-            // 
-            this.toolStripSeparator.Name = "toolStripSeparator";
-            this.toolStripSeparator.Size = new System.Drawing.Size(198, 6);
+            this.開くOToolStripMenuItem.Click += new System.EventHandler(this.openButton_Click);
             // 
             // 上書き保存SToolStripMenuItem
             // 
@@ -308,6 +323,12 @@
             this.上書き保存SToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
             this.上書き保存SToolStripMenuItem.Size = new System.Drawing.Size(201, 22);
             this.上書き保存SToolStripMenuItem.Text = "記録を保存(&S)";
+            this.上書き保存SToolStripMenuItem.Click += new System.EventHandler(this.saveButton_Click);
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(198, 6);
             // 
             // 終了XToolStripMenuItem
             // 
@@ -329,17 +350,6 @@
             this.オプションOToolStripMenuItem.Name = "オプションOToolStripMenuItem";
             this.オプションOToolStripMenuItem.Size = new System.Drawing.Size(155, 22);
             this.オプションOToolStripMenuItem.Text = "オプション(&O)";
-            // 
-            // turnLabel
-            // 
-            this.turnLabel.Name = "turnLabel";
-            this.turnLabel.Size = new System.Drawing.Size(20, 18);
-            this.turnLabel.Text = "　";
-            // 
-            // toolStripSeparator1
-            // 
-            this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(198, 6);
             // 
             // MainForm
             // 
