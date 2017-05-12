@@ -9,7 +9,7 @@ namespace ThinkingEngineBase
     /// <summary>
     /// 思考エンジンのインターフェイス
     /// </summary>
-    public interface IThinkEngine
+    public interface IThinkingEngine
     {
         /// <summary>
         /// 盤の情報をもとに思考し、次の手を表す符号なし64ビット整数を返す
