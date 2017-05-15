@@ -173,14 +173,14 @@ namespace Reversi.GUI
                 RefreshPanel();
                 RefreshTurnLabel();
             }));
-            if (turnNum-passNum >= 60)
-            {
-                MessageBox.Show(board.ResultString(), "結果");
-            }
-            else
-            {
-                await Next();
-            }
+            //if (turnNum-passNum >= 60)
+            //{
+            //    MessageBox.Show(board.ResultString(), "結果");
+            //}
+            //else
+            //{
+            //    await Next();
+            //}
         }
         private async Task Next()
         {
@@ -198,7 +198,16 @@ namespace Reversi.GUI
                     turnNum++;
                     passNum++;
                 }
-                
+                if (turnNum - passNum >= 60)
+                {
+                    MessageBox.Show(board.ResultString(), "結果");
+                    inGame = false;
+                }
+                else
+                {
+                    await Next();
+                }
+
             }
             if (turnNum%2 ==1 && goteIsCom)
             {
@@ -212,6 +221,15 @@ namespace Reversi.GUI
                     MessageBox.Show(ex.Message);
                     turnNum++;
                     passNum++;
+                }
+                if (turnNum - passNum >= 60)
+                {
+                    MessageBox.Show(board.ResultString(), "結果");
+                    inGame = false;
+                }
+                else
+                {
+                    await Next();
                 }
             }
         }
