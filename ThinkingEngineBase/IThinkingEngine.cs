@@ -8,16 +8,17 @@ namespace ThinkingEngineBase
 {
     /// <summary>
     /// 思考エンジンのインターフェイス
+    /// 思考エンジンはこのインターフェイスを実装する
     /// </summary>
     public interface IThinkingEngine
     {
         /// <summary>
-        /// 盤の情報をもとに思考し、次の手を表す符号なし64ビット整数を返す
+        /// 盤の情報をもとに思考し、次の一手を返す
         /// </summary>
-        /// <param name="black"></param>
-        /// <param name="white"></param>
+        /// <param name="board"></param>
+        /// <param name="player"></param>
         /// <returns></returns>
-        ulong Think(ulong black,ulong white);
+        Reversi.Core.ReversiMove Think(Reversi.Core.ReversiBoard board,Reversi.Core.StoneType player);
         /// <summary>
         /// 思考時間の上限を設定する
         /// </summary>
