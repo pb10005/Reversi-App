@@ -33,6 +33,7 @@
             this.bindingNavigator1 = new System.Windows.Forms.BindingNavigator(this.components);
             this.bindingNavigatorCountItem = new System.Windows.Forms.ToolStripLabel();
             this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
+            this.passButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton5 = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton2 = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton3 = new System.Windows.Forms.ToolStripButton();
@@ -72,6 +73,7 @@
             this.bindingNavigator1.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
             this.bindingNavigator1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripButton1,
+            this.passButton,
             this.toolStripButton5,
             this.toolStripButton2,
             this.toolStripButton3,
@@ -114,6 +116,16 @@
             this.toolStripButton1.Text = "新";
             this.toolStripButton1.ToolTipText = "新規対局";
             this.toolStripButton1.Click += new System.EventHandler(this.newButton_Click);
+            // 
+            // passButton
+            // 
+            this.passButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.passButton.Image = ((System.Drawing.Image)(resources.GetObject("passButton.Image")));
+            this.passButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.passButton.Name = "passButton";
+            this.passButton.Size = new System.Drawing.Size(36, 22);
+            this.passButton.Text = "パス";
+            this.passButton.Click += new System.EventHandler(this.passButton_Click);
             // 
             // toolStripButton5
             // 
@@ -408,6 +420,7 @@
         private System.Windows.Forms.ToolStripMenuItem オプションOToolStripMenuItem;
         private System.Windows.Forms.ToolStripStatusLabel turnLabel;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.ToolStripButton passButton;
     }
 }
 

@@ -50,6 +50,7 @@ namespace Reversi.GUI
                             return;
                         }
                         await Add(block.Row, block.Col);
+                        await Next();
                     };
                     matchPanel.Controls.Add(block);
                     blocks[row, col] = block;
@@ -173,14 +174,6 @@ namespace Reversi.GUI
                 RefreshPanel();
                 RefreshTurnLabel();
             }));
-            //if (turnNum-passNum >= 60)
-            //{
-            //    MessageBox.Show(board.ResultString(), "結果");
-            //}
-            //else
-            //{
-            //    await Next();
-            //}
         }
         private async Task Next()
         {
@@ -194,14 +187,16 @@ namespace Reversi.GUI
                 }
                 catch(InvalidOperationException ex)
                 {
-                    MessageBox.Show(ex.Message);
-                    turnNum++;
-                    passNum++;
+                    if (inGame)
+                    {
+                        MessageBox.Show(ex.Message);
+                        turnNum++;
+                        passNum++;
+                    }
                 }
                 if (turnNum - passNum >= 60)
                 {
-                    MessageBox.Show(board.ResultString(), "結果");
-                    inGame = false;
+                    ReportResult();
                 }
                 else
                 {
@@ -218,14 +213,16 @@ namespace Reversi.GUI
                 }
                 catch(InvalidOperationException ex)
                 {
-                    MessageBox.Show(ex.Message);
-                    turnNum++;
-                    passNum++;
+                    if (inGame)
+                    {
+                        MessageBox.Show(ex.Message);
+                        turnNum++;
+                        passNum++;
+                    }
                 }
                 if (turnNum - passNum >= 60)
                 {
-                    MessageBox.Show(board.ResultString(), "結果");
-                    inGame = false;
+                    ReportResult();
                 }
                 else
                 {
@@ -234,6 +231,10 @@ namespace Reversi.GUI
             }
         }
         private void surrenderButton_Click(object sender, EventArgs e)
+        {
+            ReportResult();
+        }
+        private void ReportResult()
         {
             if (inGame)
             {
@@ -308,6 +309,11 @@ namespace Reversi.GUI
         private void 終了XToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Close();
+        }
+
+        private void passButton_Click(object sender, EventArgs e)
+        {
+            //未実装
         }
     }
 }
