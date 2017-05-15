@@ -40,7 +40,7 @@ namespace ThinkingEngine
         {
             this.board = board;
             this.player = player;
-            legalMoves = SearchLegalMoves(); //合法手
+            legalMoves = board.SearchLegalMoves(player); //合法手
             if (legalMoves.Count ==0)
             {
                 throw new InvalidOperationException("合法手がありません");
@@ -52,27 +52,6 @@ namespace ThinkingEngine
                 return legalMoves[random];
             }
         }
-        /// <summary>
-        /// 合法手を探す
-        /// </summary>
-        private List<Reversi.Core.ReversiMove> SearchLegalMoves()
-        {
-            var res = new List<Reversi.Core.ReversiMove>();
-            for (int row = 0; row < 8; row++)
-            {
-                for (int col = 0; col < 8; col++)
-                {
-                    try
-                    {
-                        board.AddStone(row, col, player);
-                        res.Add(new Reversi.Core.ReversiMove(row, col));
-                    }
-                    catch (ArgumentException)
-                    {
-                    }
-                }
-            }
-            return res;
-        }
+        
     }
 }

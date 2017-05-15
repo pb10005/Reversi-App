@@ -114,6 +114,10 @@
       <Project>{5481189b-ae5a-4863-a1d2-e3a4f076ab48}</Project>
       <Name>Reversi.Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ThinkingEngineBase\ThinkingEngineBase.csproj">
+      <Project>{190b69fd-f1eb-4d2e-9f04-b4252dea33f5}</Project>
+      <Name>ThinkingEngineBase</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

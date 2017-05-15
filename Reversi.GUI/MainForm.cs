@@ -27,6 +27,8 @@ namespace Reversi.GUI
         Block[,] blocks = new Block[8, 8];
         MatchRecord record = MatchRecord.Empty();
         ReversiBoard board = new ReversiBoard();
+        ThinkingEngineBase.IThinkingEngine senteEngine;
+        ThinkingEngineBase.IThinkingEngine goteEngine;
         
         #region 初期化
         private void Form1_Load(object sender, EventArgs e)
@@ -60,6 +62,11 @@ namespace Reversi.GUI
             passNum = 0;
             board = ReversiBoard.InitBoard();
             record = MatchRecord.Empty();
+
+            //先手と後手で別の思考エンジンを使える
+            senteEngine = new ThinkingEngine.RandomThinking();
+            goteEngine = new ThinkingEngine.CountingEngine();
+
             RefreshTurnLabel();
             RefreshPanel();
             inGame = true;
@@ -182,8 +189,7 @@ namespace Reversi.GUI
             {
                 try
                 {
-                    var engine = new ThinkingEngine.RandomThinking();
-                    var res = engine.Think(board, StoneType.Sente);
+                    var res = senteEngine.Think(board, StoneType.Sente);
                     await Add(res.Row, res.Col);
                 }
                 catch(InvalidOperationException ex)
@@ -198,8 +204,7 @@ namespace Reversi.GUI
             {
                 try
                 {
-                    var engine = new ThinkingEngine.RandomThinking();
-                    var res = engine.Think(board, StoneType.Gote);
+                    var res = goteEngine.Think(board, StoneType.Gote);
                     await Add(res.Row, res.Col);
                 }
                 catch(InvalidOperationException ex)

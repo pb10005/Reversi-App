@@ -155,15 +155,12 @@ namespace Reversi.Core
             return res;
         }
         /// <summary>
-        /// 対局結果を文字列で返す
+        /// 黒の個数を返す
         /// </summary>
         /// <returns></returns>
-        public string ResultString()
+        public int NumOfBlack()
         {
-
             var countBlack = 0;
-            var countWhite = 0;
-            var result = "";
             foreach (var stoneExists in BlackToMat())
             {
                 if (stoneExists)
@@ -171,6 +168,15 @@ namespace Reversi.Core
                     countBlack += 1;
                 }
             }
+            return countBlack;
+        }
+        /// <summary>
+        /// 白の個数を返す
+        /// </summary>
+        /// <returns></returns>
+        public int NumOfWhite()
+        {
+            var countWhite = 0;
             foreach (var stoneExists in WhiteToMat())
             {
                 if (stoneExists)
@@ -178,6 +184,18 @@ namespace Reversi.Core
                     countWhite += 1;
                 }
             }
+            return countWhite;
+        }
+        /// <summary>
+        /// 対局結果を文字列で返す
+        /// </summary>
+        /// <returns></returns>
+        public string ResultString()
+        {
+
+            var result = "";
+            var countBlack=NumOfBlack();
+            var countWhite=NumOfWhite();
             if (countBlack == countWhite)
             {
                 result = "引き分け";
@@ -313,5 +331,29 @@ namespace Reversi.Core
             return Down(Left(m));
         }
         #endregion
+
+        /// <summary>
+        /// 合法手を探す
+        /// </summary>
+        /// <returns>合法手のリスト</returns>
+        public List<ReversiMove> SearchLegalMoves(StoneType player)
+        {
+            var res = new List<ReversiMove>();
+            for (int row = 0; row < 8; row++)
+            {
+                for (int col = 0; col < 8; col++)
+                {
+                    try
+                    {
+                        AddStone(row, col, player);
+                        res.Add(new ReversiMove(row, col));
+                    }
+                    catch (ArgumentException)
+                    {
+                    }
+                }
+            }
+            return res;
+        }
     }
 }
