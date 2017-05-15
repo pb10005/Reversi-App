@@ -59,6 +59,12 @@
     <Compile Include="MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="MatchConfigDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MatchConfigDialog.Designer.cs">
+      <DependentUpon>MatchConfigDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Block.resx">
@@ -66,6 +72,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MatchConfigDialog.resx">
+      <DependentUpon>MatchConfigDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -97,6 +106,10 @@
     <None Include="Resources\black_stone.png" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\RandomEngine\RandomEngine.csproj">
+      <Project>{0096d74d-68ad-4d2b-a380-52553b041f5e}</Project>
+      <Name>RandomEngine</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Reversi.Core\Reversi.Core.csproj">
       <Project>{5481189b-ae5a-4863-a1d2-e3a4f076ab48}</Project>
       <Name>Reversi.Core</Name>

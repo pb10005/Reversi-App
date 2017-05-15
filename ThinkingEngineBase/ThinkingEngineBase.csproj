@@ -44,6 +44,12 @@
     <Compile Include="IThinkingEngine.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Reversi.Core\Reversi.Core.csproj">
+      <Project>{5481189b-ae5a-4863-a1d2-e3a4f076ab48}</Project>
+      <Name>Reversi.Core</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
