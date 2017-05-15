@@ -11,16 +11,19 @@ using Reversi.Core;
 
 namespace Reversi.GUI
 {
-    
     public partial class MainForm : Form
     {
         public MainForm()
         {
             InitializeComponent();
         }
+        const int waitingTime = 200;
         bool inGame = false;
         bool inPlayback = false;
+        bool senteIsCom = false;
+        bool goteIsCom = false;
         int turnNum = 0;
+        int passNum = 0;
         Block[,] blocks = new Block[8, 8];
         MatchRecord record = MatchRecord.Empty();
         ReversiBoard board = new ReversiBoard();
@@ -34,67 +37,93 @@ namespace Reversi.GUI
                 for (int col = 0; col < 8; col++)
                 {
                     Block block = new Block(row, col);
-                    block.Click += (sd, ea) => { Add(block.Row, block.Col); };
+                    block.Click += async (sd, ea) =>
+                    {
+                        if (turnNum%2 ==0 && senteIsCom)
+                        {
+                            return;
+                        }
+                        if (turnNum%2 ==1 && goteIsCom)
+                        {
+                            return;
+                        }
+                        await Add(block.Row, block.Col);
+                    };
                     matchPanel.Controls.Add(block);
                     blocks[row, col] = block;
                 }
             }
         }
-        private void Init()
+        private async void Init()
         {
             turnNum = 0;
+            passNum = 0;
             board = ReversiBoard.InitBoard();
             record = MatchRecord.Empty();
             RefreshTurnLabel();
             RefreshPanel();
             inGame = true;
             inPlayback = false;
+            await Next();
         }
         #endregion
 
         #region ビューの更新
         private void RefreshTurnLabel()
         {
-            var text = "";
-            if ((turnNum+1)%2==1)
+            BeginInvoke(new Action(() =>
             {
-                text = "黒";
+                var text = "";
+                if ((turnNum + 1) % 2 == 1)
+                {
+                    text = "黒";
+                }
+                else
+                {
+                    text = "白";
+                }
+                turnLabel.Text = string.Format("{0}手目、{1}の手番", turnNum + 1, text);
             }
-            else
-            {
-                text = "白";
-            }
-            turnLabel.Text = string.Format("{0}手目、{1}の手番",turnNum+1,text);
+            ));
         }
         private void RefreshPanel()
         {
-            for (int row = 0; row < 8; row++)
+            BeginInvoke(new Action(() =>
             {
-                for (int col = 0; col < 8; col++)
+                for (int row = 0; row < 8; row++)
                 {
-                    if (board.BlackToMat()[row,col])
+                    for (int col = 0; col < 8; col++)
                     {
-                        blocks[row, col].ToBlack();
-                    }
-                    else if (board.WhiteToMat()[row,col])
-                    {
-                        blocks[row, col].ToWhite();
-                    }
-                    else
-                    {
-                        blocks[row, col].Reset();
+                        if (board.BlackToMat()[row, col])
+                        {
+                            blocks[row, col].ToBlack();
+                        }
+                        else if (board.WhiteToMat()[row, col])
+                        {
+                            blocks[row, col].ToWhite();
+                        }
+                        else
+                        {
+                            blocks[row, col].Reset();
+                        }
                     }
                 }
-            }
+            }));
         }
         #endregion
 
         #region 対局
         private void newButton_Click(object sender, EventArgs e)
         {
-            Init();
+            var dialog = new MatchConfigDialog();
+            if (dialog.ShowDialog()==DialogResult.OK)
+            {
+                senteIsCom = dialog.SenteIsCom;
+                goteIsCom = dialog.GoteIsCom;
+                Init();
+            }
         }
-        private async void Add(int row, int col)
+        private async Task Add(int row, int col)
         {
             if (!inGame)
             {
@@ -131,12 +160,54 @@ namespace Reversi.GUI
                     turnNum--;
                 }
             }
-            await Task.Delay(500); //500ms待ってから裏返す
-            RefreshPanel();
-            RefreshTurnLabel();
-            if (turnNum >= 60)
+            await Task.Delay(waitingTime); 
+            BeginInvoke(new Action(() =>
+            {
+                RefreshPanel();
+                RefreshTurnLabel();
+            }));
+            if (turnNum-passNum >= 60)
             {
                 MessageBox.Show(board.ResultString(), "結果");
+            }
+            else
+            {
+                await Next();
+            }
+        }
+        private async Task Next()
+        {
+            await Task.Delay(waitingTime);
+            if (turnNum%2 == 0 && senteIsCom)
+            {
+                try
+                {
+                    var engine = new ThinkingEngine.RandomThinking();
+                    var res = engine.Think(board, StoneType.Sente);
+                    await Add(res.Row, res.Col);
+                }
+                catch(InvalidOperationException ex)
+                {
+                    MessageBox.Show(ex.Message);
+                    turnNum++;
+                    passNum++;
+                }
+                
+            }
+            if (turnNum%2 ==1 && goteIsCom)
+            {
+                try
+                {
+                    var engine = new ThinkingEngine.RandomThinking();
+                    var res = engine.Think(board, StoneType.Gote);
+                    await Add(res.Row, res.Col);
+                }
+                catch(InvalidOperationException ex)
+                {
+                    MessageBox.Show(ex.Message);
+                    turnNum++;
+                    passNum++;
+                }
             }
         }
         private void surrenderButton_Click(object sender, EventArgs e)
