@@ -66,7 +66,7 @@ namespace Reversi.GUI
 
             //先手と後手で別の思考エンジンを使える
             senteEngine = new ThinkingEngine.RandomThinking();
-            goteEngine = new ThinkingEngine.CountingEngine();
+            goteEngine = new ThinkingEngine.CountingAndSearchingEngine(5,10);
 
             RefreshTurnLabel();
             RefreshPanel();
@@ -182,7 +182,7 @@ namespace Reversi.GUI
             {
                 try
                 {
-                    var res = senteEngine.Think(board, StoneType.Sente);
+                    var res = await senteEngine.Think(board, StoneType.Sente);
                     await Add(res.Row, res.Col);
                 }
                 catch(InvalidOperationException ex)
@@ -208,7 +208,7 @@ namespace Reversi.GUI
             {
                 try
                 {
-                    var res = goteEngine.Think(board, StoneType.Gote);
+                    var res = await goteEngine.Think(board, StoneType.Gote);
                     await Add(res.Row, res.Col);
                 }
                 catch(InvalidOperationException ex)

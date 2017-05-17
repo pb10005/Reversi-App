@@ -33,8 +33,10 @@ namespace ThinkingEngine
         /// <param name="board"></param>
         /// <param name="player"></param>
         /// <returns></returns>
-        public Reversi.Core.ReversiMove Think(ReversiBoard board, StoneType player)
+        public　async Task<Reversi.Core.ReversiMove> Think(ReversiBoard board, StoneType player)
         {
+            return await Task.Run(() =>
+            {
             this.board = board;
             this.player = player;
             legalMoves = board.SearchLegalMoves(player); //合法手
@@ -48,20 +50,20 @@ namespace ThinkingEngine
                 var bestMove = default(ReversiMove);
                 foreach (var item in board.SearchLegalMoves(player))
                 {
-                    var child = board.AddStone(item.Row, item.Col,player);
+                    var child = board.AddStone(item.Row, item.Col, player);
                     switch (player)
                     {
                         case StoneType.None:
                             break;
                         case StoneType.Sente:
-                            if(best < child.NumOfBlack())
+                            if (best < child.NumOfBlack())
                             {
                                 best = child.NumOfBlack();
                                 bestMove = item;
                             }
                             break;
                         case StoneType.Gote:
-                            if(best < child.NumOfWhite())
+                            if (best < child.NumOfWhite())
                             {
                                 best = child.NumOfWhite();
                                 bestMove = item;
@@ -72,7 +74,9 @@ namespace ThinkingEngine
                     }
                 }
                 return bestMove;
-            }
+                }
+            });
+            
         }
     }
 }

@@ -18,7 +18,7 @@ namespace ThinkingEngineBase
         /// <param name="board"></param>
         /// <param name="player"></param>
         /// <returns></returns>
-        Reversi.Core.ReversiMove Think(Reversi.Core.ReversiBoard board,Reversi.Core.StoneType player);
+        Task<Reversi.Core.ReversiMove> Think(Reversi.Core.ReversiBoard board,Reversi.Core.StoneType player);
         /// <summary>
         /// 思考時間の上限を設定する
         /// </summary>
