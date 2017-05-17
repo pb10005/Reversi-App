@@ -66,7 +66,7 @@ namespace Reversi.GUI
 
             //先手と後手で別の思考エンジンを使える
             senteEngine = new ThinkingEngine.RandomThinking();
-            goteEngine = new ThinkingEngine.CountingAndSearchingEngine(5,10);
+            goteEngine = new ThinkingEngine.EvaluatingAndSearchingEngine(20,2);
 
             RefreshTurnLabel();
             RefreshPanel();

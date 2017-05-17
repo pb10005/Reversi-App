@@ -7,9 +7,39 @@ using Reversi.Core;
 
 namespace ThinkingEngine
 {
-    public class CountingAndSearchingEngine:ThinkingEngineBase.IThinkingEngine
+    public static class Eval
     {
-        public CountingAndSearchingEngine(int depth,int breadth)
+        static int[,] evalBoard = new int[8, 8]
+        {
+            {20,0,3,2,2,3,0,20 },
+            {0,-1,-1,-1,-1,-1,-1,0 },
+            {3,-1,1,1,1,1,-1,3 },
+            {2,-1,1,1,1,1,-1,2 },
+            {2,-1,1,1,1,1,-1,2},
+            {3,-1,1,1,1,1,-1,3 },
+            {0,-1,-1,-1,-1,-1,-1,0 },
+            {20,0,3,2,2,3,0,20 }
+        };
+        public static int Execute(bool[,] board)
+        {
+            var res = 0;
+            for (int row = 0; row < 8; row++)
+            {
+                for (int col = 0; col < 8; col++)
+                {
+                    if (board[row,col])
+                    {
+                        res += evalBoard[row, col];
+                    }
+                }
+            }
+            return res;
+        }
+    }
+
+    public class EvaluatingAndSearchingEngine:ThinkingEngineBase.IThinkingEngine
+    {
+        public EvaluatingAndSearchingEngine(int depth,int breadth)
         {
             this.depth = depth;
             this.breadth = breadth;
@@ -48,12 +78,17 @@ namespace ThinkingEngine
         {
             return await Task<ReversiMove>.Run(async () =>
             {
-
-            if (board.NumOfBlack()+board.NumOfWhite()>=60-depth)
+                
+            if (board.NumOfBlack()+board.NumOfWhite()>=58)
             {
+                
                 return await new CountingEngine().Think(board, player);
             }
-            moveTree = new List<ReversiBoard>[depth+1];
+                else if (board.NumOfBlack() + board.NumOfWhite() >= 60 - depth)
+                {
+                    depth = 60 - board.NumOfBlack() - board.NumOfWhite() - 1;
+                }
+                moveTree = new List<ReversiBoard>[depth+1];
             moveTree[0] = new List<ReversiBoard>() { board };
             for (int i = 0; i < depth; i++)
             {
@@ -74,11 +109,11 @@ namespace ThinkingEngine
                     }
                     if ((i%2 + (int) player) ==1)
                     {
-                        tmpList = tmpList.OrderBy(x => -x.NumOfBlack()).ToList();
+                        tmpList = tmpList.OrderBy(x => -Eval.Execute(x.WhiteToMat())).ToList();
                     }
                     else
                     {
-                        tmpList.OrderBy(x => -x.NumOfWhite()).ToList();
+                        tmpList.OrderBy(x => -Eval.Execute(x.WhiteToMat())).ToList();
                     }
                     if (tmpList.Count > breadth)
                     {
@@ -102,7 +137,7 @@ namespace ThinkingEngine
             }
             foreach (var item in moveTree[depth])
             {
-                var count = player==StoneType.Sente?item.NumOfBlack():item.NumOfWhite();
+                var count = player==StoneType.Sente?Eval.Execute(item.BlackToMat()):Eval.Execute(item.WhiteToMat());
                 countMap[item] = count;
             }
             for (int i = depth-1; i >= 1; i--)
@@ -112,7 +147,7 @@ namespace ThinkingEngine
                     var best = 0;
                         foreach (var child in childMap[item])
                         {
-                            var count = (i % 2 + (int)player) == 1 ? child.NumOfBlack() : child.NumOfWhite();
+                            var count = (i % 2 + (int)player) == 1 ? Eval.Execute(child.BlackToMat()) : Eval.Execute(child.WhiteToMat());
                             if (count > best)
                             {
                                 best = count;
