@@ -7,3 +7,6 @@ binaryフォルダ: 実行ファイルとdllファイル
 ## 命名規則
 private変数: Camel方式(someField)  
 メソッド, public変数: Pascal方式(SomeMethod())
+## 思考エンジンの実力
+ランダムで手を選ぶエンジンにはそこそこの確率で勝てる
+(ただし、たまに大敗)
