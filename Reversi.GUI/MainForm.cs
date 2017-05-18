@@ -69,8 +69,8 @@ namespace Reversi.GUI
             record = MatchRecord.Empty();
 
             //先手と後手で別の思考エンジンを使える
-            senteEngine = new ThinkingEngine.CountingEngine();
-            goteEngine = new ThinkingEngine.EvaluatingAndSearchingEngine(1,2);
+            senteEngine = new ThinkingEngine.RandomThinking();
+            goteEngine = new ThinkingEngine.EvaluatingAndSearchingEngine(15, 2);
 
             RefreshTurnLabel();
             RefreshPanel();

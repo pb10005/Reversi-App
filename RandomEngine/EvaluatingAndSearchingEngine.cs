@@ -98,7 +98,7 @@ namespace ThinkingEngine
                     childMap.Add(item,new List<ReversiBoard>());
                     var plyr = (i % 2 + (int)player) == 1 ?StoneType.Sente:StoneType.Gote;
                     var childMove = item.SearchLegalMoves(plyr);
-                        if (childMove.Count==0)
+                        if (i==0&&childMove.Count==0)
                         {
                             throw new InvalidOperationException("合法手がありません");
                         }
