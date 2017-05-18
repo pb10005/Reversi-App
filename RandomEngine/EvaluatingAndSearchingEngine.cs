@@ -96,26 +96,32 @@ namespace ThinkingEngine
                 foreach (var item in moveTree[i])
                 {
                     childMap.Add(item,new List<ReversiBoard>());
-                    var plyr = (i % 2 + (int)player) == 1 ?StoneType.Sente:StoneType.Gote;
+                    var plyr = (i  + (int)player)%2 == 1 ?StoneType.Sente:StoneType.Gote;
                     var childMove = item.SearchLegalMoves(plyr);
+                    var tmpList = new List<ReversiBoard>();
                         if (i==0&&childMove.Count==0)
                         {
                             throw new InvalidOperationException("合法手がありません");
                         }
-                    var tmpList = new List<ReversiBoard>();
+                        else if (childMove.Count==0)
+                        {
+                            childMap[item] = new List<ReversiBoard>() { item };
+                            //tmpList.Add(item);
+                        }
                     foreach (var move in childMove)
                     {
                         var child = item.AddStone(move.Row,move.Col,plyr);
-                        moveMap[child] = move;
+                            if(i==0)
+                                moveMap[child] = move;
                         tmpList.Add(child);
                     }
-                        if ((i % 2 + (int)player) == 1)
+                        if ((i+ (int)player)%2 == 1)
                         {
-                            tmpList = tmpList.OrderBy(x => -Eval.Execute(x.WhiteToMat())).ToList();
+                            tmpList = tmpList.OrderBy(x => -Eval.Execute(x.BlackToMat())+Eval.Execute(x.WhiteToMat())).ToList();
                         }
                         else
                         {
-                            tmpList.OrderBy(x => -Eval.Execute(x.WhiteToMat())).ToList();
+                            tmpList.OrderBy(x => -Eval.Execute(x.WhiteToMat())+Eval.Execute(x.BlackToMat())).ToList();
                         }
                         if (tmpList.Count > breadth&&i!=0)
                         {
@@ -140,17 +146,18 @@ namespace ThinkingEngine
             }
             foreach (var item in moveTree[depth])
             {
-                var count = player==StoneType.Sente?Eval.Execute(item.BlackToMat()):Eval.Execute(item.WhiteToMat());
+                var count = player==StoneType.Sente?Eval.Execute(item.BlackToMat())-Eval.Execute(item.WhiteToMat()):Eval.Execute(item.WhiteToMat())-Eval.Execute(item.BlackToMat());
                 countMap[item] = count;
             }
             for (int i = depth-1; i >= 1; i--)
             {
                 foreach (var item in moveTree[i])
                 {
-                    var best = -100;
+                    var best = -999999;
                         foreach (var child in childMap[item])
                         {
-                            var count = (i % 2 + (int)player) == 1 ? Eval.Execute(child.BlackToMat()) : Eval.Execute(child.WhiteToMat());
+                            //var count = (i + (int)player)%2 == 1 ? Eval.Execute(child.BlackToMat()) : Eval.Execute(child.WhiteToMat());
+                            var count = countMap[child];
                             if (count > best)
                             {
                                 best = count;
