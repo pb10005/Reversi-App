@@ -11,14 +11,14 @@ namespace ThinkingEngine
     {
         static int[,] evalBoard = new int[8, 8]
         {
-            {20,0,3,2,2,3,0,20 },
-            {0,-1,-1,-1,-1,-1,-1,0 },
+            {20,1,3,2,2,3,1,20 },
+            {1,-1,-1,-1,-1,-1,-1,1 },
             {3,-1,1,1,1,1,-1,3 },
             {2,-1,1,1,1,1,-1,2 },
             {2,-1,1,1,1,1,-1,2},
             {3,-1,1,1,1,1,-1,3 },
-            {0,-1,-1,-1,-1,-1,-1,0 },
-            {20,0,3,2,2,3,0,20 }
+            {1,-1,-1,-1,-1,-1,-1,1 },
+            {20,1,3,2,2,3,0,20 }
         };
         public static int Execute(bool[,] board)
         {
@@ -98,41 +98,44 @@ namespace ThinkingEngine
                     childMap.Add(item,new List<ReversiBoard>());
                     var plyr = (i % 2 + (int)player) == 1 ?StoneType.Sente:StoneType.Gote;
                     var childMove = item.SearchLegalMoves(plyr);
+                        if (childMove.Count==0)
+                        {
+                            throw new InvalidOperationException("合法手がありません");
+                        }
                     var tmpList = new List<ReversiBoard>();
                     foreach (var move in childMove)
                     {
                         var child = item.AddStone(move.Row,move.Col,plyr);
                         moveMap[child] = move;
                         tmpList.Add(child);
-                        //var cnt = (i % 2 + (int)player) == 1 ?child.NumOfBlack():child.NumOfWhite();
-                        //countMap[item] = cnt;
                     }
-                    if ((i%2 + (int) player) ==1)
-                    {
-                        tmpList = tmpList.OrderBy(x => -Eval.Execute(x.WhiteToMat())).ToList();
-                    }
-                    else
-                    {
-                        tmpList.OrderBy(x => -Eval.Execute(x.WhiteToMat())).ToList();
-                    }
-                    if (tmpList.Count > breadth)
-                    {
-                        for (int j = 0; j < breadth; j++)
+                        if ((i % 2 + (int)player) == 1)
                         {
-                            var child = tmpList[j];
-                            moveTree[i+1].Add(child);
-                            childMap[item].Add(child);
+                            tmpList = tmpList.OrderBy(x => -Eval.Execute(x.WhiteToMat())).ToList();
+                        }
+                        else
+                        {
+                            tmpList.OrderBy(x => -Eval.Execute(x.WhiteToMat())).ToList();
+                        }
+                        if (tmpList.Count > breadth&&i!=0)
+                        {
+                            for (int j = 0; j < breadth; j++)
+                            {
+                                var child = tmpList[j];
+                                moveTree[i + 1].Add(child);
+                                childMap[item].Add(child);
 
+                            }
                         }
-                    }
-                    else
-                    {
-                        foreach (var child in tmpList)
+                        else
                         {
-                            moveTree[i + 1].Add(child);
-                            childMap[item].Add(child);
+                            foreach (var child in tmpList)
+                            {
+                                moveTree[i + 1].Add(child);
+                                childMap[item].Add(child);
+                            }
                         }
-                    }
+                    
                 }
             }
             foreach (var item in moveTree[depth])
@@ -144,7 +147,7 @@ namespace ThinkingEngine
             {
                 foreach (var item in moveTree[i])
                 {
-                    var best = 0;
+                    var best = -100;
                         foreach (var child in childMap[item])
                         {
                             var count = (i % 2 + (int)player) == 1 ? Eval.Execute(child.BlackToMat()) : Eval.Execute(child.WhiteToMat());

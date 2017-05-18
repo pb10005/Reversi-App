@@ -18,10 +18,14 @@ namespace Reversi.GUI
             InitializeComponent();
         }
         const int waitingTime = 200;
+        #region フラグ
         bool inGame = false;
         bool inPlayback = false;
         bool senteIsCom = false;
         bool goteIsCom = false;
+        bool previousPass = false;
+        #endregion
+
         int turnNum = 0;
         int passNum = 0;
         Block[,] blocks = new Block[8, 8];
@@ -65,8 +69,8 @@ namespace Reversi.GUI
             record = MatchRecord.Empty();
 
             //先手と後手で別の思考エンジンを使える
-            senteEngine = new ThinkingEngine.RandomThinking();
-            goteEngine = new ThinkingEngine.EvaluatingAndSearchingEngine(20,2);
+            senteEngine = new ThinkingEngine.CountingEngine();
+            goteEngine = new ThinkingEngine.EvaluatingAndSearchingEngine(1,2);
 
             RefreshTurnLabel();
             RefreshPanel();
@@ -149,6 +153,7 @@ namespace Reversi.GUI
                     board = board.AddStone(row, col, StoneType.Sente);
                     blocks[row, col].ToBlack(); //仮に打つ
                     record.Boards.Add(board);
+                    previousPass = false;
                 }
                 catch (ArgumentException)
                 {
@@ -184,14 +189,26 @@ namespace Reversi.GUI
                 {
                     var res = await senteEngine.Think(board, StoneType.Sente);
                     await Add(res.Row, res.Col);
+                    previousPass = false;
                 }
                 catch(InvalidOperationException ex)
                 {
                     if (inGame)
                     {
-                        MessageBox.Show(ex.Message);
-                        turnNum++;
-                        passNum++;
+                        if (previousPass)
+                        {
+                            MessageBox.Show("お互い合法手がないため、終わりです");
+                            MessageBox.Show(board.ResultString(), "結果");
+                            previousPass = false;
+                            inGame = false;
+                        }
+                        else
+                        {
+                            MessageBox.Show(ex.Message);
+                            turnNum++;
+                            passNum++;
+                            previousPass = true;
+                        }
                     }
                 }
                 if (turnNum - passNum >= 60)
@@ -213,11 +230,23 @@ namespace Reversi.GUI
                 }
                 catch(InvalidOperationException ex)
                 {
+
                     if (inGame)
                     {
-                        MessageBox.Show(ex.Message);
-                        turnNum++;
-                        passNum++;
+                        if (previousPass)
+                        {
+                            MessageBox.Show("お互い合法手がないため、終わりです");
+                            MessageBox.Show(board.ResultString(), "結果");
+                            previousPass = false;
+                            inGame = false;
+                        }
+                        else
+                        {
+                            MessageBox.Show(ex.Message);
+                            turnNum++;
+                            passNum++;
+                            previousPass = true;
+                        }
                     }
                 }
                 if (turnNum - passNum >= 60)
