@@ -52,12 +52,6 @@ namespace ThinkingEngine
         {
             //今は実装しない
         }
-        //オセロの局面
-        Reversi.Core.ReversiBoard board;
-        //先手または後手
-        Reversi.Core.StoneType player;
-        //合法手のリスト
-        List<ReversiMove> legalMoves = new List<ReversiMove>();
 
         List<ReversiBoard>[] moveTree;
         Dictionary<ReversiBoard, int> countMap = new Dictionary<ReversiBoard, int>();
@@ -103,18 +97,13 @@ namespace ThinkingEngine
                         {
                             throw new InvalidOperationException("合法手がありません");
                         }
-                        else if (childMove.Count==0)
+                        foreach (var move in childMove)
                         {
-                            childMap[item] = new List<ReversiBoard>() { item };
-                            //tmpList.Add(item);
-                        }
-                    foreach (var move in childMove)
-                    {
-                        var child = item.AddStone(move.Row,move.Col,plyr);
-                            if(i==0)
+                            var child = item.AddStone(move.Row, move.Col, plyr);
+                            if (i == 0)
                                 moveMap[child] = move;
-                        tmpList.Add(child);
-                    }
+                            tmpList.Add(child);
+                        }
                         if ((i+ (int)player)%2 == 1)
                         {
                             tmpList = tmpList.OrderBy(x => -Eval.Execute(x.BlackToMat())+Eval.Execute(x.WhiteToMat())).ToList();
@@ -167,7 +156,7 @@ namespace ThinkingEngine
                     countMap[item] = best;
                 }
             }
-            var bst = 0;
+            var bst = -99999;
             var bestMove = default(ReversiMove);
             foreach (var item in moveTree[1])
             {
@@ -177,7 +166,12 @@ namespace ThinkingEngine
                     bestMove = moveMap[item];
                 }
             }
-            return bestMove;
+                var text = Enumerable.Range(0,moveTree.Count())
+                        .Zip(moveTree.Select(x => string.Join(", ", x.Count) + "\n"),
+                        (x, y) => x +": "+ y);
+                System.IO.File.AppendAllText("debug.log",string.Join("\r\n",text));
+                System.IO.File.AppendAllText("debug.log","\r\n");
+                return bestMove;
             });
 
         }
