@@ -67,6 +67,7 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="VersionInfo.cs" />
     <EmbeddedResource Include="Block.resx">
       <DependentUpon>Block.cs</DependentUpon>
     </EmbeddedResource>

@@ -340,5 +340,23 @@ namespace Reversi.GUI
         {
             //未実装
         }
+
+        private void バージョン情報ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var form = new Form()
+            {
+                Text = "バージョン情報",
+                Size = new Size(200, 120),
+                FormBorderStyle = FormBorderStyle.FixedToolWindow,
+                StartPosition = FormStartPosition.CenterParent
+            };
+            var label = new Label()
+            {
+                Location = new Point(10, 10),
+                Text = "Reversi\nバージョン: " + VersionInfo.Version
+            };
+            form.Controls.Add(label);
+            form.ShowDialog();
+        }
     }
 }
