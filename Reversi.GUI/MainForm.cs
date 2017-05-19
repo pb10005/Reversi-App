@@ -70,7 +70,7 @@ namespace Reversi.GUI
 
             //先手と後手で別の思考エンジンを使える
             goteEngine = new ThinkingEngine.RandomThinking();
-            senteEngine = new ThinkingEngine.EvaluatingAndSearchingEngine(5,5);
+            senteEngine = new ThinkingEngine.EvaluatingAndSearchingEngine(6,6);
 
             RefreshTurnLabel();
             RefreshPanel();
@@ -182,6 +182,10 @@ namespace Reversi.GUI
         }
         private async Task Next()
         {
+            if (turnNum - passNum >= 60)
+            {
+                ReportResult();
+            }
             await Task.Delay(waitingTime);
             if (turnNum%2 == 0 && senteIsCom)
             {
@@ -211,15 +215,7 @@ namespace Reversi.GUI
                         }
                     }
                 }
-                if (turnNum - passNum >= 60)
-                {
-                    ReportResult();
-                }
-                else
-                {
                     await Next();
-                }
-
             }
             if (turnNum%2 ==1 && goteIsCom)
             {
