@@ -5,13 +5,17 @@ using System.Text;
 using System.Threading.Tasks;
 using Reversi.Core;
 
-namespace ThinkingEngine
+namespace GreedyEngine
 {
     /// <summary>
     /// 一番多く返せる手を選ぶエンジン
     /// </summary>
     public class CountingEngine : ThinkingEngineBase.IThinkingEngine
     {
+        /// <summary>
+        /// エンジンの名前
+        /// </summary>
+        public string Name { get; } = "Greedy";
         /// <summary>
         /// 思考時間の上限を設定する
         /// </summary>

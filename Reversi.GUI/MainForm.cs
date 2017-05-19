@@ -31,6 +31,7 @@ namespace Reversi.GUI
         Block[,] blocks = new Block[8, 8];
         MatchRecord record = MatchRecord.Empty();
         ReversiBoard board = new ReversiBoard();
+        EngineManager manager = new EngineManager();
         ThinkingEngineBase.IThinkingEngine senteEngine;
         ThinkingEngineBase.IThinkingEngine goteEngine;
         
@@ -60,6 +61,15 @@ namespace Reversi.GUI
                     blocks[row, col] = block;
                 }
             }
+            //エンジンを読み込み
+            if (System.IO.File.Exists("engines.txt"))
+            {
+                manager = EngineManager.FromFile("engines.txt");
+            }
+            else
+            {
+                System.IO.File.Create("engines.txt");
+            }
         }
         private async void Init()
         {
@@ -68,9 +78,6 @@ namespace Reversi.GUI
             board = ReversiBoard.InitBoard();
             record = MatchRecord.Empty();
 
-            //先手と後手で別の思考エンジンを使える
-            goteEngine = new ThinkingEngine.RandomThinking();
-            senteEngine = new ThinkingEngine.EvaluatingAndSearchingEngine(6,6);
 
             RefreshTurnLabel();
             RefreshPanel();
@@ -127,11 +134,19 @@ namespace Reversi.GUI
         #region 対局
         private void newButton_Click(object sender, EventArgs e)
         {
-            var dialog = new MatchConfigDialog();
+            var dialog = new MatchConfigDialog(manager.EngineMap.Keys.ToList());
             if (dialog.ShowDialog()==DialogResult.OK)
             {
                 senteIsCom = dialog.SenteIsCom;
                 goteIsCom = dialog.GoteIsCom;
+                if (senteIsCom)
+                {
+                    senteEngine = manager.EngineMap[dialog.SenteName];
+                }
+                if (goteIsCom)
+                {
+                    goteEngine = manager.EngineMap[dialog.GoteName];
+                }
                 Init();
             }
         }
@@ -357,6 +372,15 @@ namespace Reversi.GUI
             };
             form.Controls.Add(label);
             form.ShowDialog();
+        }
+
+        private void エンジン管理ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            EngineDialog dialog = new EngineDialog(manager);
+            if (dialog.ShowDialog()==DialogResult.OK)
+            {
+                manager.SaveToFile("engines.txt");
+            }
         }
     }
 }

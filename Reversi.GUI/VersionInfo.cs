@@ -8,6 +8,6 @@ namespace Reversi.GUI
 {
     class VersionInfo
     {
-        public static string Version = "1.0.0";
+        public static string Version = "1.0.2";
     }
 }

@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Reversi.Core;
 
-namespace ThinkingEngine
+namespace EvalAndSearchEngine
 {
     public static class Eval
     {
@@ -39,6 +39,14 @@ namespace ThinkingEngine
 
     public class EvaluatingAndSearchingEngine:ThinkingEngineBase.IThinkingEngine
     {
+        /// <summary>
+        /// エンジンの名前
+        /// </summary>
+        public string Name { get; } = "そこそこ強い";
+        public EvaluatingAndSearchingEngine()
+        {
+
+        }
         public EvaluatingAndSearchingEngine(int depth,int breadth)
         {
             this.depth = depth;
@@ -58,9 +66,9 @@ namespace ThinkingEngine
         Dictionary<ReversiBoard, ReversiMove> moveMap = new Dictionary<ReversiBoard, ReversiMove>();
         Dictionary<ReversiBoard, List<ReversiBoard>> childMap = new Dictionary<ReversiBoard, List<ReversiBoard>>();
         //探索の深さ
-        int depth;
+        int depth=6;
         //探索の広さ
-        int breadth;
+        int breadth=6;
         
         /// <summary>
         /// 盤の情報をもとに思考し、次の手を返す

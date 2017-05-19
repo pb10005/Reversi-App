@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ThinkingEngine
+namespace RandomEngine
 {
     /////////////////////////////////////////
     //  思考エンジンのサンプル
@@ -15,6 +15,10 @@ namespace ThinkingEngine
     /// </summary>
     public class RandomThinking : ThinkingEngineBase.IThinkingEngine
     {
+        /// <summary>
+        /// エンジンの名前
+        /// </summary>
+        public string Name { get; } = "ランダム";
         /// <summary>
         /// 思考時間の上限を設定する
         /// </summary>

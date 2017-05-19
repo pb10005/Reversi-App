@@ -24,5 +24,9 @@ namespace ThinkingEngineBase
         /// </summary>
         /// <param name="milliSecond">単位: ミリ秒</param>
         void SetTimeLimit(int milliSecond);
+        /// <summary>
+        /// エンジンの名前
+        /// </summary>
+        string Name { get; }
     }
 }

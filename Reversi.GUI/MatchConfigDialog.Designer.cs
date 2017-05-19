@@ -59,8 +59,7 @@
             this.comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBox1.FormattingEnabled = true;
             this.comboBox1.Items.AddRange(new object[] {
-            "人間",
-            "COM"});
+            "人間"});
             this.comboBox1.Location = new System.Drawing.Point(14, 24);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(121, 20);
@@ -71,8 +70,7 @@
             this.comboBox2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBox2.FormattingEnabled = true;
             this.comboBox2.Items.AddRange(new object[] {
-            "人間",
-            "COM"});
+            "人間"});
             this.comboBox2.Location = new System.Drawing.Point(14, 71);
             this.comboBox2.Name = "comboBox2";
             this.comboBox2.Size = new System.Drawing.Size(121, 20);
@@ -101,6 +99,7 @@
             this.Name = "MatchConfigDialog";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "対局設定";
+            this.Load += new System.EventHandler(this.MatchConfigDialog_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 

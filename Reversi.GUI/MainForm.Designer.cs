@@ -61,6 +61,8 @@
             this.オプションOToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ヘルプHToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.バージョン情報ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.エンジン管理ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             ((System.ComponentModel.ISupportInitialize)(this.bindingNavigator1)).BeginInit();
             this.bindingNavigator1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
@@ -355,7 +357,9 @@
             // ツールTToolStripMenuItem
             // 
             this.ツールTToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.オプションOToolStripMenuItem});
+            this.オプションOToolStripMenuItem,
+            this.toolStripSeparator2,
+            this.エンジン管理ToolStripMenuItem});
             this.ツールTToolStripMenuItem.Name = "ツールTToolStripMenuItem";
             this.ツールTToolStripMenuItem.Size = new System.Drawing.Size(60, 20);
             this.ツールTToolStripMenuItem.Text = "ツール(&T)";
@@ -363,7 +367,7 @@
             // オプションOToolStripMenuItem
             // 
             this.オプションOToolStripMenuItem.Name = "オプションOToolStripMenuItem";
-            this.オプションOToolStripMenuItem.Size = new System.Drawing.Size(134, 22);
+            this.オプションOToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.オプションOToolStripMenuItem.Text = "オプション(&O)";
             // 
             // ヘルプHToolStripMenuItem
@@ -380,6 +384,18 @@
             this.バージョン情報ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.バージョン情報ToolStripMenuItem.Text = "バージョン情報";
             this.バージョン情報ToolStripMenuItem.Click += new System.EventHandler(this.バージョン情報ToolStripMenuItem_Click);
+            // 
+            // エンジン管理ToolStripMenuItem
+            // 
+            this.エンジン管理ToolStripMenuItem.Name = "エンジン管理ToolStripMenuItem";
+            this.エンジン管理ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.エンジン管理ToolStripMenuItem.Text = "エンジン管理";
+            this.エンジン管理ToolStripMenuItem.Click += new System.EventHandler(this.エンジン管理ToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator2
+            // 
+            this.toolStripSeparator2.Name = "toolStripSeparator2";
+            this.toolStripSeparator2.Size = new System.Drawing.Size(149, 6);
             // 
             // MainForm
             // 
@@ -441,6 +457,8 @@
         private System.Windows.Forms.ToolStripButton passButton;
         private System.Windows.Forms.ToolStripMenuItem ヘルプHToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem バージョン情報ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
+        private System.Windows.Forms.ToolStripMenuItem エンジン管理ToolStripMenuItem;
     }
 }
 
