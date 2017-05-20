@@ -8,6 +8,9 @@ namespace Reversi.GUI
 {
     class VersionInfo
     {
-        public static string Version = "1.0.2";
+        /// <summary>
+        /// ビルドごとに更新
+        /// </summary>
+        public static string Version = "1.0.3";
     }
 }
