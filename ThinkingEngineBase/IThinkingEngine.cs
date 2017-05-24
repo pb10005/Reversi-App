@@ -28,5 +28,10 @@ namespace ThinkingEngineBase
         /// エンジンの名前
         /// </summary>
         string Name { get; }
+        /// <summary>
+        /// 現局面の評価値を返す
+        /// </summary>
+        /// <returns></returns>
+        int GetEval();
     }
 }

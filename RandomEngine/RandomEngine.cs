@@ -59,6 +59,10 @@ namespace RandomEngine
                 }
             });
         }
-        
+
+        public int GetEval()
+        {
+            return 111111;
+        }
     }
 }

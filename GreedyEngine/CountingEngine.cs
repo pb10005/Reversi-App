@@ -82,5 +82,10 @@ namespace GreedyEngine
             });
             
         }
+
+        public int GetEval()
+        {
+            return 111111;
+        }
     }
 }

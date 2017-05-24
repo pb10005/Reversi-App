@@ -55,6 +55,7 @@ namespace Reversi.GUI
                             return;
                         }
                         await Add(block.Row, block.Col);
+                        previousPass = false;
                         await Next();
                     };
                     matchPanel.Controls.Add(block);
@@ -93,15 +94,24 @@ namespace Reversi.GUI
             BeginInvoke(new Action(() =>
             {
                 var text = "";
+                var eval = 0;
                 if ((turnNum + 1) % 2 == 1)
                 {
                     text = "黒";
+                    if (goteEngine != default(ThinkingEngineBase.IThinkingEngine))
+                    {
+                        eval = goteEngine.GetEval();
+                    }
                 }
                 else
                 {
                     text = "白";
+                    if (senteEngine != default(ThinkingEngineBase.IThinkingEngine))
+                    {
+                        eval = senteEngine.GetEval();
+                    }
                 }
-                turnLabel.Text = string.Format("{0}手目、{1}の手番", turnNum + 1, text);
+                turnLabel.Text = string.Format("{0}手目、{1}の手番、評価値{2}", turnNum + 1, text,eval);
             }
             ));
         }
