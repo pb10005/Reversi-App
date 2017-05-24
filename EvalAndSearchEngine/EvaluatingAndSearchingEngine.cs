@@ -11,14 +11,14 @@ namespace EvalAndSearchEngine
     {
         static int[,] evalBoard = new int[8, 8]
         {
-            {20,1,3,2,2,3,1,20 },
-            {1,-1,-1,-1,-1,-1,-1,1 },
-            {3,-1,1,1,1,1,-1,3 },
-            {2,-1,1,1,1,1,-1,2 },
-            {2,-1,1,1,1,1,-1,2},
-            {3,-1,1,1,1,1,-1,3 },
-            {1,-1,-1,-1,-1,-1,-1,1 },
-            {20,1,3,2,2,3,0,20 }
+            {89,7,-56,56,56,-56,7,89},
+            {-10,-88,-73,18,18,-73,-88,-10},
+            {-28,-98,24,-5,-5,24,-98,-28 },
+            {65,-100,-4,-21,-21,-4,-100,65},
+            {65,-100,-4,-21,-21,-4,-100,65},
+            {-28,-98,24,-5,-5,24,-98,-28 },
+            {-10,-88,-73,18,18,-73,-88,-10},
+            {89,7,-56,56,56,-56,7,89}
         };
         public static int Execute(bool[,] board)
         {
@@ -66,9 +66,9 @@ namespace EvalAndSearchEngine
         Dictionary<ReversiBoard, ReversiMove> moveMap = new Dictionary<ReversiBoard, ReversiMove>();
         Dictionary<ReversiBoard, List<ReversiBoard>> childMap = new Dictionary<ReversiBoard, List<ReversiBoard>>();
         //探索の深さ
-        int depth=6;
+        int depth=5;
         //探索の広さ
-        int breadth=6;
+        int breadth=2;
         
         /// <summary>
         /// 盤の情報をもとに思考し、次の手を返す
@@ -118,7 +118,7 @@ namespace EvalAndSearchEngine
                         }
                         else
                         {
-                            tmpList.OrderBy(x => -Eval.Execute(x.WhiteToMat())+Eval.Execute(x.BlackToMat())).ToList();
+                            tmpList = tmpList.OrderBy(x => -Eval.Execute(x.WhiteToMat())+Eval.Execute(x.BlackToMat())).ToList();
                         }
                         if (tmpList.Count > breadth&&i!=0)
                         {

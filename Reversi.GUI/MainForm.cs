@@ -351,9 +351,12 @@ namespace Reversi.GUI
             Close();
         }
 
-        private void passButton_Click(object sender, EventArgs e)
+        private async void passButton_Click(object sender, EventArgs e)
         {
-            //未実装
+            turnNum++;
+            passNum++;
+            previousPass = true;
+            await Next();
         }
 
         private void バージョン情報ToolStripMenuItem_Click(object sender, EventArgs e)
