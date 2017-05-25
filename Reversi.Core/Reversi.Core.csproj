@@ -42,6 +42,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Match.cs" />
     <Compile Include="MatchRecord.cs" />
     <Compile Include="ReversiMove.cs" />
     <Compile Include="TypeDefinition.cs" />

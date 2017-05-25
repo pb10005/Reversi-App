@@ -11,8 +11,13 @@ namespace Reversi.GUI
     {
         public Dictionary<string, ThinkingEngineBase.IThinkingEngine> EngineMap { get; } = new Dictionary<string, ThinkingEngineBase.IThinkingEngine>();
         public Dictionary<string,string> pathMap = new Dictionary<string,string>();
+        /// <summary>
+        /// リフレクションによるプラグインライブラリの読み込み
+        /// </summary>
+        /// <param name="path"></param>
         public void Register(string path)
         {
+            #region 参考 http://...
             if (path == "")
                 return;
             var asm = Assembly.LoadFrom(path);
@@ -29,6 +34,7 @@ namespace Reversi.GUI
                     break;
                 }
             }
+            #endregion
         }
         public void SaveToFile(string path)
         {

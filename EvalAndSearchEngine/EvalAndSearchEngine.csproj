@@ -7,8 +7,8 @@
     <ProjectGuid>{76C9BFD7-20E4-4F78-853D-E386C31FB26D}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>EvalAndSearchEngine</RootNamespace>
-    <AssemblyName>EvalAndSearchEngine</AssemblyName>
+    <RootNamespace>SuperGreedyEngine</RootNamespace>
+    <AssemblyName>SuperGreedy</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
