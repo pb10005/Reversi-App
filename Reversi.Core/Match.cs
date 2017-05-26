@@ -16,56 +16,51 @@ namespace Reversi.Core
         public StoneType CurrentPlayer { get; private set; }
         public int Turn { get; private set; }
 
-        bool previouslyPassed;
+        List<bool> passList = new List<bool>();
         /// <summary>
         /// 終了を通知するイベント
         /// </summary>
         public event Action<string> End = delegate { };
         public void Init()
         {
-            previouslyPassed = false;
             Turn = 0;
             CurrentBoard = ReversiBoard.InitBoard();
             CurrentPlayer = StoneType.Sente;
+            passList = new List<bool>();
         }
-        public void Move(int row,int col)
+        public MoveResult Move(int row,int col)
         {
             try
             {
                 CurrentBoard = CurrentBoard.AddStone(row, col, CurrentPlayer);
+                passList.Add(false);
             }
-            catch(ArgumentException)
+            catch (ArgumentException)
             {
-                return;
+                return MoveResult.Illegal;
             }
             CurrentPlayer = CurrentPlayer == StoneType.Sente ? StoneType.Gote : StoneType.Sente;
             
-            if (CurrentBoard.NumOfBlack()+CurrentBoard.NumOfWhite()==64)
+            if (CurrentBoard.NumOfBlack()+CurrentBoard.NumOfWhite()>=64)
             {
                 //終了
                 End(CurrentBoard.ResultString());
-                return;
-            }
-            else if (CurrentBoard.SearchLegalMoves(CurrentPlayer).Count==0)
-            {
-                Pass();
-                return;
+                return MoveResult.End;
             }
             Turn++;
-            previouslyPassed = false;
+            return MoveResult.OK;
         }
         public void Pass()
         {
-            if (previouslyPassed)
+            if (passList.Last())
             {
-                End("2連続でパスしたため、終了です");
-                previouslyPassed = false;
+                End(CurrentBoard.ResultString());
             }
             else
             {
                 Turn++;
                 CurrentPlayer = CurrentPlayer == StoneType.Sente ? StoneType.Gote : StoneType.Sente;
-                previouslyPassed = true;
+                passList.Add(true);
             }
         }
         public void Surrender()
