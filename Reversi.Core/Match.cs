@@ -34,6 +34,8 @@ namespace Reversi.Core
             {
                 CurrentBoard = CurrentBoard.AddStone(row, col, CurrentPlayer);
                 passList.Add(false);
+                if(System.IO.File.Exists("debug.log"))
+                    System.IO.File.AppendAllText("debug.log",string.Format("{0}:{1},{2}\r\n",Turn,row,col));
             }
             catch (ArgumentException)
             {
@@ -44,7 +46,7 @@ namespace Reversi.Core
             if (CurrentBoard.NumOfBlack()+CurrentBoard.NumOfWhite()>=64)
             {
                 //終了
-                End(CurrentBoard.ResultString());
+                //End(CurrentBoard.ResultString());
                 return MoveResult.End;
             }
             Turn++;

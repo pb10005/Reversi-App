@@ -26,7 +26,7 @@ namespace Reversi.GUI
         #endregion
 
         Block[,] blocks = new Block[8, 8];
-        //MatchRecord record = MatchRecord.Empty();
+        MatchRecord record = MatchRecord.Empty();
         ReversiBoard board = new ReversiBoard();
         Match game = new Match();
         EngineManager manager = new EngineManager();
@@ -44,6 +44,7 @@ namespace Reversi.GUI
                     Block block = new Block(row, col);
                     block.Click += async (sd, ea) =>
                     {
+                        if (!inGame) return;
                         if (game.CurrentPlayer == StoneType.Sente && senteIsCom)
                         {
                             return;
@@ -53,7 +54,6 @@ namespace Reversi.GUI
                             return;
                         }
                         await Add(block.Row, block.Col);
-                        //previousPass = false;
                         await Next();
                     };
                     matchPanel.Controls.Add(block);
@@ -73,7 +73,7 @@ namespace Reversi.GUI
         private async void Init()
         {
             board = ReversiBoard.InitBoard();
-            //record = MatchRecord.Empty();
+            record = MatchRecord.Empty();
             game.Init();
             game.End += Game_End;
             RefreshTurnLabel();
@@ -147,6 +147,31 @@ namespace Reversi.GUI
                 }
             }));
         }
+
+        private void RefreshPanelForPlayback()
+        {
+            BeginInvoke(new Action(() =>
+            {
+                for (int row = 0; row < 8; row++)
+                {
+                    for (int col = 0; col < 8; col++)
+                    {
+                        if (board.BlackToMat()[row, col])
+                        {
+                            blocks[row, col].ToBlack();
+                        }
+                        else if (board.WhiteToMat()[row, col])
+                        {
+                            blocks[row, col].ToWhite();
+                        }
+                        else
+                        {
+                            blocks[row, col].Reset();
+                        }
+                    }
+                }
+            }));
+        }
         #endregion
 
         #region 対局
@@ -189,11 +214,13 @@ namespace Reversi.GUI
                 {
                     blocks[row, col].ToWhite();
                 }
+                record.Boards.Add(game.CurrentBoard);
             }
             else if (res == MoveResult.End)
             {
                 inGame = false;
                 BeginInvoke(new Action(() => { MessageBox.Show(game.CurrentBoard.ResultString()); }));
+                record.Boards.Add(game.CurrentBoard);
             }
             await Task.Delay(waitingTime); 
             BeginInvoke(new Action(() =>
@@ -229,8 +256,16 @@ namespace Reversi.GUI
         }
         private void surrenderButton_Click(object sender, EventArgs e)
         {
+            if (!inGame)
+            {
+                return;
+            }
             game.Surrender();
             inGame = false;
+            BeginInvoke(new Action(() =>
+            {
+                MessageBox.Show(game.CurrentBoard.ResultString());
+            }));
         }
         #endregion
 
@@ -243,7 +278,7 @@ namespace Reversi.GUI
             };
             if(dialog.ShowDialog()==DialogResult.OK)
             {
-                //record.ToFile(dialog.FileName);
+                record.ToFile(dialog.FileName);
             }
         }
 
@@ -257,14 +292,14 @@ namespace Reversi.GUI
             {
                 try
                 {
-                    //record = MatchRecord.FromFile(dialog.FileName);
+                    record = MatchRecord.FromFile(dialog.FileName);
                     var source = new BindingSource();
-                    //source.DataSource = record.Boards;
+                    source.DataSource = record.Boards;
                     bindingNavigator1.BindingSource = source;
-                    //turnNum = Convert.ToInt32(bindingNavigatorPositionItem.Text);
-                    //board = record.Boards[turnNum - 1];
-                    RefreshTurnLabel();
-                    RefreshPanel();
+                    var turnNum = Convert.ToInt32(bindingNavigatorPositionItem.Text);
+                    board = record.Boards[turnNum - 1];
+                    //RefreshTurnLabel();
+                    RefreshPanelForPlayback();
                     inPlayback = true;
                 }
                 catch
@@ -280,10 +315,10 @@ namespace Reversi.GUI
         {
             if (inPlayback)
             {
-                //turnNum = Convert.ToInt32(bindingNavigatorPositionItem.Text);
-                //board = record.Boards[turnNum - 1];
-                RefreshPanel();
-                RefreshTurnLabel();
+                var turnNum = Convert.ToInt32(bindingNavigatorPositionItem.Text);
+                board = record.Boards[turnNum - 1];
+                RefreshPanelForPlayback();
+                //RefreshTurnLabel();
             }
         }
 
@@ -291,7 +326,13 @@ namespace Reversi.GUI
         {
             if (inPlayback)
             {
-                Init();
+                bindingNavigator1.BindingSource = null;
+                inPlayback = false;
+                inGame = false;
+                board = ReversiBoard.InitBoard();
+                record = MatchRecord.Empty();
+                RefreshPanel();
+                RefreshTurnLabel();
             }
         }
         #endregion
@@ -303,6 +344,7 @@ namespace Reversi.GUI
 
         private async void passButton_Click(object sender, EventArgs e)
         {
+            if (!inGame) return;
             game.Pass();
             await Next();
         }

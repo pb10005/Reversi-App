@@ -36,6 +36,11 @@ namespace Reversi.GUI
             }
             #endregion
         }
+        public void Remove(string name)
+        {
+            pathMap.Remove(name);
+            EngineMap.Remove(name);
+        }
         public void SaveToFile(string path)
         {
             System.IO.File.WriteAllText(path,string.Join(",\n",pathMap.Values));
