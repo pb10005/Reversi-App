@@ -11,6 +11,6 @@ namespace Reversi.GUI
         /// <summary>
         /// ビルドごとに更新
         /// </summary>
-        public static string Version = "1.0.4";
+        public static string Version = "1.0.5";
     }
 }
