@@ -81,10 +81,7 @@ namespace EvalAndSearchEngine
             return await Task.Run(async () =>
             {
                 var children = board.SearchLegalMoves(player);
-                if (children.Count==0)
-                {
-                    throw new InvalidOperationException("合法手がありません");
-                }
+                
                 foreach (var item in children)
                 {
                     var nextBoard = board.AddStone(item.Row, item.Col, player);

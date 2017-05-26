@@ -23,7 +23,6 @@ namespace Reversi.GUI
         bool inPlayback = false;
         bool senteIsCom = false;
         bool goteIsCom = false;
-        //bool previousPass = false;
         #endregion
 
         Block[,] blocks = new Block[8, 8];
@@ -86,7 +85,7 @@ namespace Reversi.GUI
 
         private void Game_End(string message)
         {
-            BeginInvoke(new Action(()=>
+            BeginInvoke(new Action(() =>
             {
                 if (inGame)
                 {
@@ -179,7 +178,8 @@ namespace Reversi.GUI
             {
                 return;
             }
-            if(game.Move(row, col))
+            var res = game.Move(row, col);
+            if (res == MoveResult.OK)
             {
                 if (game.CurrentPlayer == StoneType.Gote)
                 {
@@ -190,7 +190,11 @@ namespace Reversi.GUI
                     blocks[row, col].ToWhite();
                 }
             }
-            
+            else if (res == MoveResult.End)
+            {
+                inGame = false;
+                BeginInvoke(new Action(() => { MessageBox.Show(game.CurrentBoard.ResultString()); }));
+            }
             await Task.Delay(waitingTime); 
             BeginInvoke(new Action(() =>
             {
@@ -205,13 +209,18 @@ namespace Reversi.GUI
                 return;
             }
             await Task.Delay(waitingTime);
-            if (game.CurrentPlayer == StoneType.Sente && senteIsCom)
+            if (game.CurrentBoard.SearchLegalMoves(game.CurrentPlayer).Count==0)
+            {
+                game.Pass();
+                await Next();
+            }
+            else if (game.CurrentPlayer == StoneType.Sente && senteIsCom)
             {
                 var res = await senteEngine.Think(game.CurrentBoard, StoneType.Sente);
                 await Add(res.Row, res.Col);
                 await Next();
             }
-            if (game.CurrentPlayer == StoneType.Gote && goteIsCom)
+            else if (game.CurrentPlayer == StoneType.Gote && goteIsCom)
             {
                 var res = await goteEngine.Think(game.CurrentBoard, StoneType.Gote);
                 await Add(res.Row, res.Col);
@@ -221,6 +230,7 @@ namespace Reversi.GUI
         private void surrenderButton_Click(object sender, EventArgs e)
         {
             game.Surrender();
+            inGame = false;
         }
         #endregion
 
