@@ -28,7 +28,7 @@ namespace Reversi.Core
             CurrentBoard = ReversiBoard.InitBoard();
             CurrentPlayer = StoneType.Sente;
         }
-        public void Move(int row,int col)
+        public bool Move(int row,int col)
         {
             try
             {
@@ -36,7 +36,7 @@ namespace Reversi.Core
             }
             catch(ArgumentException)
             {
-                return;
+                return false;
             }
             CurrentPlayer = CurrentPlayer == StoneType.Sente ? StoneType.Gote : StoneType.Sente;
             
@@ -44,21 +44,22 @@ namespace Reversi.Core
             {
                 //終了
                 End(CurrentBoard.ResultString());
-                return;
+                return false;
             }
             else if (CurrentBoard.SearchLegalMoves(CurrentPlayer).Count==0)
             {
                 Pass();
-                return;
+                return false;
             }
             Turn++;
             previouslyPassed = false;
+            return true;
         }
         public void Pass()
         {
             if (previouslyPassed)
             {
-                End("2連続でパスしたため、終了です");
+                End("終了です");
                 previouslyPassed = false;
             }
             else
