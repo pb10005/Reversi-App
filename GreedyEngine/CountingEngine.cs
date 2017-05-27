@@ -44,12 +44,7 @@ namespace GreedyEngine
             this.board = board;
             this.player = player;
             legalMoves = board.SearchLegalMoves(player); //合法手
-            if (legalMoves.Count == 0)
-            {
-                throw new InvalidOperationException("合法手がありません");
-            }
-            else
-            {
+            
                 var best = 0;
                 var bestMove = default(ReversiMove);
                 foreach (var item in board.SearchLegalMoves(player))
@@ -78,7 +73,6 @@ namespace GreedyEngine
                     }
                 }
                 return bestMove;
-                }
             });
             
         }

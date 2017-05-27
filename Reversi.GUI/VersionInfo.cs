@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace Reversi.GUI
 {
-    class VersionInfo
+    internal class VersionInfo
     {
         /// <summary>
         /// ビルドごとに更新
         /// </summary>
-        public static string Version = "1.0.3";
+        internal static string Version = "1.0.5";
     }
 }

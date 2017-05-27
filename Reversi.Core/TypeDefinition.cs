@@ -24,6 +24,12 @@ namespace Reversi.Core
         /// </summary>
         Gote = 2
     }
+    public enum MoveResult
+    {
+        OK = 0,
+        End = 1,
+        Illegal = 2
+    }
     /// <summary>
     /// 対局結果
     /// </summary>

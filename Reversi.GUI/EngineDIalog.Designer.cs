@@ -61,6 +61,7 @@
             this.button2.TabIndex = 2;
             this.button2.Text = "削除";
             this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
             // button3
             // 
@@ -83,7 +84,8 @@
             this.Controls.Add(this.button1);
             this.Controls.Add(this.listBox1);
             this.Name = "EngineDialog";
-            this.Text = "EngineDIalog";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+            this.Text = "エンジン管理";
             this.Load += new System.EventHandler(this.EngineDIalog_Load);
             this.ResumeLayout(false);
 

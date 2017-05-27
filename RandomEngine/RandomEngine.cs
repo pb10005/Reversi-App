@@ -47,16 +47,9 @@ namespace RandomEngine
                 this.board = board;
                 this.player = player;
                 legalMoves = board.SearchLegalMoves(player); //合法手
-                if (legalMoves.Count == 0)
-                {
-                    throw new InvalidOperationException("合法手がありません");
-                }
-                else
-                {
-                    //乱数を生成して次の手を決定
-                    var random = new Random().Next(legalMoves.Count);
-                    return legalMoves[random];
-                }
+                //乱数を生成して次の手を決定
+                var random = new Random().Next(legalMoves.Count);
+                return legalMoves[random];
             });
         }
 

@@ -23,14 +23,12 @@ namespace Reversi.GUI
         bool inPlayback = false;
         bool senteIsCom = false;
         bool goteIsCom = false;
-        bool previousPass = false;
         #endregion
 
-        int turnNum = 0;
-        int passNum = 0;
         Block[,] blocks = new Block[8, 8];
         MatchRecord record = MatchRecord.Empty();
         ReversiBoard board = new ReversiBoard();
+        Match game = new Match();
         EngineManager manager = new EngineManager();
         ThinkingEngineBase.IThinkingEngine senteEngine;
         ThinkingEngineBase.IThinkingEngine goteEngine;
@@ -46,16 +44,16 @@ namespace Reversi.GUI
                     Block block = new Block(row, col);
                     block.Click += async (sd, ea) =>
                     {
-                        if (turnNum%2 ==0 && senteIsCom)
+                        if (!inGame) return;
+                        if (game.CurrentPlayer == StoneType.Sente && senteIsCom)
                         {
                             return;
                         }
-                        if (turnNum%2 ==1 && goteIsCom)
+                        if (game.CurrentPlayer == StoneType.Gote && goteIsCom)
                         {
                             return;
                         }
                         await Add(block.Row, block.Col);
-                        previousPass = false;
                         await Next();
                     };
                     matchPanel.Controls.Add(block);
@@ -74,17 +72,27 @@ namespace Reversi.GUI
         }
         private async void Init()
         {
-            turnNum = 0;
-            passNum = 0;
             board = ReversiBoard.InitBoard();
             record = MatchRecord.Empty();
-
-
+            game.Init();
+            game.End += Game_End;
             RefreshTurnLabel();
             RefreshPanel();
             inGame = true;
             inPlayback = false;
             await Next();
+        }
+
+        private void Game_End(string message)
+        {
+            BeginInvoke(new Action(() =>
+            {
+                if (inGame)
+                {
+                    inGame = false;
+                    MessageBox.Show(message);
+                }
+            }));
         }
         #endregion
 
@@ -95,7 +103,7 @@ namespace Reversi.GUI
             {
                 var text = "";
                 var eval = 0;
-                if ((turnNum + 1) % 2 == 1)
+                if (game.CurrentPlayer == StoneType.Sente)
                 {
                     text = "黒";
                     if (goteEngine != default(ThinkingEngineBase.IThinkingEngine))
@@ -111,11 +119,36 @@ namespace Reversi.GUI
                         eval = senteEngine.GetEval();
                     }
                 }
-                turnLabel.Text = string.Format("{0}手目、{1}の手番、評価値{2}", turnNum + 1, text,eval);
+                turnLabel.Text = string.Format("{0}手目、{1}の手番、評価値{2}", game.Turn+1, text,eval);
             }
             ));
         }
         private void RefreshPanel()
+        {
+            BeginInvoke(new Action(() =>
+            {
+                for (int row = 0; row < 8; row++)
+                {
+                    for (int col = 0; col < 8; col++)
+                    {
+                        if (game.CurrentBoard.BlackToMat()[row, col])
+                        {
+                            blocks[row, col].ToBlack();
+                        }
+                        else if (game.CurrentBoard.WhiteToMat()[row, col])
+                        {
+                            blocks[row, col].ToWhite();
+                        }
+                        else
+                        {
+                            blocks[row, col].Reset();
+                        }
+                    }
+                }
+            }));
+        }
+
+        private void RefreshPanelForPlayback()
         {
             BeginInvoke(new Action(() =>
             {
@@ -170,33 +203,24 @@ namespace Reversi.GUI
             {
                 return;
             }
-            turnNum++;
-            if (turnNum % 2 == 1)
+            var res = game.Move(row, col);
+            if (res == MoveResult.OK)
             {
-                try
+                if (game.CurrentPlayer == StoneType.Gote)
                 {
-                    board = board.AddStone(row, col, StoneType.Sente);
-                    blocks[row, col].ToBlack(); //仮に打つ
-                    record.Boards.Add(board);
-                    previousPass = false;
+                    blocks[row, col].ToBlack();
                 }
-                catch (ArgumentException)
+                else
                 {
-                    turnNum--;
+                    blocks[row, col].ToWhite();
                 }
+                record.Boards.Add(game.CurrentBoard);
             }
-            else
+            else if (res == MoveResult.End)
             {
-                try
-                {
-                    board = board.AddStone(row, col, StoneType.Gote);
-                    blocks[row, col].ToWhite(); //仮に打つ
-                    record.Boards.Add(board);
-                }
-                catch (ArgumentException)
-                {
-                    turnNum--;
-                }
+                inGame = false;
+                BeginInvoke(new Action(() => { MessageBox.Show(game.CurrentBoard.ResultString()); }));
+                record.Boards.Add(game.CurrentBoard);
             }
             await Task.Delay(waitingTime); 
             BeginInvoke(new Action(() =>
@@ -207,90 +231,41 @@ namespace Reversi.GUI
         }
         private async Task Next()
         {
-            if (turnNum - passNum >= 60)
+            if (!inGame)
             {
-                ReportResult();
+                return;
             }
             await Task.Delay(waitingTime);
-            if (turnNum%2 == 0 && senteIsCom)
+            if (game.CurrentBoard.SearchLegalMoves(game.CurrentPlayer).Count==0)
             {
-                try
-                {
-                    var res = await senteEngine.Think(board, StoneType.Sente);
-                    await Add(res.Row, res.Col);
-                    previousPass = false;
-                }
-                catch(InvalidOperationException ex)
-                {
-                    if (inGame)
-                    {
-                        if (previousPass)
-                        {
-                            MessageBox.Show("お互い合法手がないため、終わりです");
-                            MessageBox.Show(board.ResultString(), "結果");
-                            previousPass = false;
-                            inGame = false;
-                        }
-                        else
-                        {
-                            MessageBox.Show(ex.Message);
-                            turnNum++;
-                            passNum++;
-                            previousPass = true;
-                        }
-                    }
-                }
-                    await Next();
+                game.Pass();
+                await Next();
             }
-            if (turnNum%2 ==1 && goteIsCom)
+            else if (game.CurrentPlayer == StoneType.Sente && senteIsCom)
             {
-                try
-                {
-                    var res = await goteEngine.Think(board, StoneType.Gote);
-                    await Add(res.Row, res.Col);
-                }
-                catch(InvalidOperationException ex)
-                {
-
-                    if (inGame)
-                    {
-                        if (previousPass)
-                        {
-                            MessageBox.Show("お互い合法手がないため、終わりです");
-                            MessageBox.Show(board.ResultString(), "結果");
-                            previousPass = false;
-                            inGame = false;
-                        }
-                        else
-                        {
-                            MessageBox.Show(ex.Message);
-                            turnNum++;
-                            passNum++;
-                            previousPass = true;
-                        }
-                    }
-                }
-                if (turnNum - passNum >= 60)
-                {
-                    ReportResult();
-                }
-                else
-                {
-                    await Next();
-                }
+                var res = await senteEngine.Think(game.CurrentBoard, StoneType.Sente);
+                await Add(res.Row, res.Col);
+                await Next();
+            }
+            else if (game.CurrentPlayer == StoneType.Gote && goteIsCom)
+            {
+                var res = await goteEngine.Think(game.CurrentBoard, StoneType.Gote);
+                await Add(res.Row, res.Col);
+                await Next();
             }
         }
         private void surrenderButton_Click(object sender, EventArgs e)
         {
-            ReportResult();
-        }
-        private void ReportResult()
-        {
-            if (inGame)
+            if (!inGame)
             {
-                inGame = false;
-                MessageBox.Show(board.ResultString(), "結果");
+                return;
             }
+            game.Surrender();
+            inGame = false;
+            BeginInvoke(new Action(() =>
+            {
+                MessageBox.Show(game.CurrentBoard.ResultString());
+            }));
         }
         #endregion
 
@@ -321,10 +296,10 @@ namespace Reversi.GUI
                     var source = new BindingSource();
                     source.DataSource = record.Boards;
                     bindingNavigator1.BindingSource = source;
-                    turnNum = Convert.ToInt32(bindingNavigatorPositionItem.Text);
+                    var turnNum = Convert.ToInt32(bindingNavigatorPositionItem.Text);
                     board = record.Boards[turnNum - 1];
-                    RefreshTurnLabel();
-                    RefreshPanel();
+                    //RefreshTurnLabel();
+                    RefreshPanelForPlayback();
                     inPlayback = true;
                 }
                 catch
@@ -340,10 +315,10 @@ namespace Reversi.GUI
         {
             if (inPlayback)
             {
-                turnNum = Convert.ToInt32(bindingNavigatorPositionItem.Text);
+                var turnNum = Convert.ToInt32(bindingNavigatorPositionItem.Text);
                 board = record.Boards[turnNum - 1];
-                RefreshPanel();
-                RefreshTurnLabel();
+                RefreshPanelForPlayback();
+                //RefreshTurnLabel();
             }
         }
 
@@ -351,7 +326,13 @@ namespace Reversi.GUI
         {
             if (inPlayback)
             {
-                Init();
+                bindingNavigator1.BindingSource = null;
+                inPlayback = false;
+                inGame = false;
+                board = ReversiBoard.InitBoard();
+                record = MatchRecord.Empty();
+                RefreshPanel();
+                RefreshTurnLabel();
             }
         }
         #endregion
@@ -363,9 +344,8 @@ namespace Reversi.GUI
 
         private async void passButton_Click(object sender, EventArgs e)
         {
-            turnNum++;
-            passNum++;
-            previousPass = true;
+            if (!inGame) return;
+            game.Pass();
             await Next();
         }
 

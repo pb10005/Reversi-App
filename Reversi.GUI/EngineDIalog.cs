@@ -41,5 +41,12 @@ namespace Reversi.GUI
             DialogResult = DialogResult.OK;
             Close();
         }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            var name = listBox1.SelectedItem.ToString();
+            manager.Remove(name);
+            listBox1.DataSource = manager.EngineMap.Keys.ToList();
+        }
     }
 }
