@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<ArrayOfEnginePath xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <EnginePath>
+    <Name>Minmax</Name>
+    <Path>C:\Users\saiki\Documents\GitHub\Reversi-App\binary\engines\EvalEngine.dll</Path>
+  </EnginePath>
+  <EnginePath>
+    <Name>ランダム</Name>
+    <Path>C:\Users\saiki\Documents\GitHub\Reversi-App\binary\engines\RandomEngine.dll</Path>
+  </EnginePath>
+</ArrayOfEnginePath>

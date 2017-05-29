@@ -30,7 +30,18 @@ namespace Reversi.GUI
             };
             if (dialog.ShowDialog()==DialogResult.OK)
             {
-                manager.Register(dialog.FileName);
+                try
+                {
+                    manager.Register(dialog.FileName);
+                }
+                catch(ArgumentException ex)
+                {
+                    MessageBox.Show("既に登録されています", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+                catch (Exception)
+                {
+                    MessageBox.Show("登録に失敗しました","エラー",MessageBoxButtons.OK,MessageBoxIcon.Error);
+                }
                 listBox1.DataSource = manager.EngineMap.Keys.ToList();
             }
 

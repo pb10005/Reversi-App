@@ -18,6 +18,7 @@ namespace Reversi.GUI
             InitializeComponent();
         }
         const int waitingTime = 200;
+        const string enginePath = "engines.xml";
         #region フラグ
         bool inGame = false;
         bool inPlayback = false;
@@ -61,13 +62,20 @@ namespace Reversi.GUI
                 }
             }
             //エンジンを読み込み
-            if (System.IO.File.Exists("engines.txt"))
+            if (System.IO.File.Exists(enginePath))
             {
-                manager = EngineManager.FromFile("engines.txt");
+                try
+                {
+                    manager = EngineManager.FromFile(enginePath);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message,"読み込みエラー",MessageBoxButtons.OK,MessageBoxIcon.Error);
+                }
             }
             else
             {
-                System.IO.File.Create("engines.txt");
+                System.IO.File.Create(enginePath).Close();
             }
         }
         private async void Init()
@@ -356,6 +364,7 @@ namespace Reversi.GUI
                 Text = "バージョン情報",
                 Size = new Size(200, 120),
                 FormBorderStyle = FormBorderStyle.FixedToolWindow,
+                MaximizeBox = false,
                 StartPosition = FormStartPosition.CenterParent
             };
             var label = new Label()
@@ -372,7 +381,7 @@ namespace Reversi.GUI
             EngineDialog dialog = new EngineDialog(manager);
             if (dialog.ShowDialog()==DialogResult.OK)
             {
-                manager.SaveToFile("engines.txt");
+                manager.SaveToFile(enginePath);
             }
         }
     }

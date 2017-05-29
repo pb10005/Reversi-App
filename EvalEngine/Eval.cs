@@ -6,38 +6,61 @@ using System.Threading.Tasks;
 
 namespace EvalEngine
 {
-    static class Eval
+    /// <summary>
+    /// 評価関数
+    /// </summary>
+    public class Eval
     {
-        static int[,] evalBoard = new int[8, 8]
+        public Eval()
         {
-            {89,7,-56,56,56,-56,7,89},
-            {-10,-88,-73,18,18,-73,-88,-10},
-            {-28,-98,24,-5,-5,24,-98,-28 },
-            {65,-100,-4,-21,-21,-4,-100,65},
-            {65,-100,-4,-21,-21,-4,-100,65},
-            {-28,-98,24,-5,-5,24,-98,-28 },
-            {-10,-88,-73,18,18,-73,-88,-10},
-            {89,7,-56,56,56,-56,7,89}
-        };
-        public static int Execute(bool[,] black,bool[,] white)
+
+        }
+        public static Eval FromParamsString(string paramsString)
         {
-            var res = 0;
+            var paramsArray = paramsString.Split(',').Select(x => int.Parse(x)).ToArray();
+            var res = new Eval();
+            for (int row = 0; row < 4; row++)
+            {
+                for (int col = 0; col < 4; col++)
+                {
+                    var param = paramsArray[4 * row + col];
+
+                    res.evalBoard[row, col] = param;
+                    res.evalBoard[7 - row, col] = param;
+                    res.evalBoard[row, 7 - col] = param;
+                    res.evalBoard[7 - row, 7 - col] = param;
+
+                }
+            }
+            return res;
+        }
+        private int[,] evalBoard = new int[8, 8];
+        public int Execute(bool[,] black, bool[,] white)
+        {
+            var blackValue = 0;
+            var whiteValue = 0;
             for (int row = 0; row < 8; row++)
             {
                 for (int col = 0; col < 8; col++)
                 {
                     if (black[row, col])
                     {
-                        res += evalBoard[row, col];
-                    }
-                    else if (white[row,col])
-                    {
-                        res -= evalBoard[row, col];
+                        blackValue += evalBoard[row, col];
                     }
                 }
             }
-            return res;
+            for (int row = 0; row < 8; row++)
+            {
+                for (int col = 0; col < 8; col++)
+                {
+                    if (white[row, col])
+                    {
+                        whiteValue += evalBoard[row, col];
+                    }
+                }
+            }
+            return blackValue - whiteValue;
         }
     }
-
+    
 }
