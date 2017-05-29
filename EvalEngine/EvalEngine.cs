@@ -67,7 +67,7 @@ namespace EvalEngine
                 foreach (var item in children)
                 {
                     var nextBoard = board.AddStone(item.Row, item.Col, player);
-                    var res = await AlphaBeta(nextBoard, player,3,-1000,1000);
+                    var res = await AlphaBeta(nextBoard, player,4,int.MinValue,int.MaxValue);
                     countMap[item] = res;
                 }
                 if (player == StoneType.Sente)
@@ -180,6 +180,7 @@ namespace EvalEngine
                     {
                         return evaluator.Execute(board.BlackToMat(), board.WhiteToMat());
                     }
+                    return evaluator.Execute(board.BlackToMat(), board.WhiteToMat());
                     if (player == StoneType.Sente)
                     {
                         foreach (var item in children)
@@ -200,7 +201,7 @@ namespace EvalEngine
                         {
                             var nextBoard = board.AddStone(item.Row, item.Col, StoneType.Gote);
                             var alphabeta = await AlphaBeta(nextBoard, StoneType.Gote, depth - 1, alpha, beta);
-                            beta = -beta < -alphabeta ? alphabeta : beta;
+                            beta = beta > alphabeta ? alphabeta : beta;
                             if (alpha >= beta)
                             {
                                 return alpha; //枝刈り
@@ -230,7 +231,7 @@ namespace EvalEngine
                     {
                         var nextBoard = board.AddStone(item.Row, item.Col, StoneType.Gote);
                         var alphabeta = await AlphaBeta(nextBoard, StoneType.Gote, depth - 1, alpha, beta);
-                        beta = -beta < -alphabeta ? alphabeta:beta;
+                        beta = beta > alphabeta ? alphabeta:beta;
                         if (alpha >= beta)
                         {
                             return alpha; //枝刈り
