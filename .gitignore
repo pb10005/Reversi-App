@@ -69,6 +69,7 @@ artifacts/
 *.svclog
 *.scc
 
+
 # Chutzpah Test files
 _Chutzpah*
 
@@ -243,5 +244,5 @@ ModelManifest.xml
 
 # FAKE - F# Make
 .fake/
-/binary/engines.txt
+/binary/engines.xml
 *.txt

@@ -11,7 +11,7 @@ namespace EvalEngine
 {
     public class ThinkingEngine : IThinkingEngine
     {
-        Eval evaluator = Eval.FromParamsString("100,0,25,100,-5,-66,-64,78,-71,-77,6,-2,100,-64,43,-48");
+        Eval evaluator = FromParamsString("86,17,31,100,2,-85,-78,66,-34,-74,42,48,47,-99,56,16");
         public Eval Evaluator
         {
             set
@@ -67,7 +67,7 @@ namespace EvalEngine
                 foreach (var item in children)
                 {
                     var nextBoard = board.AddStone(item.Row, item.Col, player);
-                    var res = await MiniMax(nextBoard, player, 1);
+                    var res = await AlphaBeta(nextBoard, player,3,-1000,1000);
                     countMap[item] = res;
                 }
                 if (player == StoneType.Sente)
@@ -103,7 +103,38 @@ namespace EvalEngine
                 }
                 int bestEval = player == StoneType.Sente ? int.MaxValue : int.MinValue;
                 var nextPlayer = player == StoneType.Sente ? StoneType.Gote : StoneType.Sente;
-                foreach (var item in board.SearchLegalMoves(nextPlayer))
+                var children = board.SearchLegalMoves(nextPlayer);
+                if (children.Count == 0)
+                {
+                    var passed = board.SearchLegalMoves(player);
+                    if (passed.Count == 0)
+                    {
+                        return evaluator.Execute(board.BlackToMat(), board.WhiteToMat());
+                    }
+                    foreach (var item in passed)
+                    {
+                        switch (player)
+                        {
+                            case StoneType.Sente:
+                                var val = await MiniMax(board.AddStone(item.Row, item.Col, StoneType.Sente), StoneType.Sente, depth - 1);
+                                if (bestEval < val)
+                                {
+                                    bestEval = val;
+                                }
+                                break;
+                            case StoneType.Gote:
+                                var val2 = await MiniMax(board.AddStone(item.Row, item.Col, StoneType.Gote), StoneType.Gote, depth - 1);
+                                if (-bestEval < -val2)
+                                {
+                                    bestEval = val2;
+                                }
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                }
+                foreach (var item in children)
                 {
                     switch (nextPlayer)
                     {
@@ -128,6 +159,85 @@ namespace EvalEngine
                     }
                 }
                 return bestEval;
+            });
+        }
+
+        private async Task<int> AlphaBeta(ReversiBoard board, StoneType player, int depth, int alpha, int beta)
+        {
+            return await Task.Run(async () =>
+            {
+                if (depth == 0)
+                {
+                    return evaluator.Execute(board.BlackToMat(), board.WhiteToMat());
+                }
+                var nextPlayer = player == StoneType.Sente ? StoneType.Gote : StoneType.Sente;
+                var children = board.SearchLegalMoves(nextPlayer);
+                #region パス
+                if (children.Count == 0)
+                {
+                    var passed = board.SearchLegalMoves(player);
+                    if (passed.Count == 0)
+                    {
+                        return evaluator.Execute(board.BlackToMat(), board.WhiteToMat());
+                    }
+                    if (player == StoneType.Sente)
+                    {
+                        foreach (var item in children)
+                        {
+                            var nextBoard = board.AddStone(item.Row, item.Col, StoneType.Sente);
+                            var alphabeta = await AlphaBeta(nextBoard, StoneType.Sente, depth - 1, alpha, beta);
+                            alpha = alpha > alphabeta ? alpha : alphabeta;
+                            if (alpha >= beta)
+                            {
+                                return beta; //枝刈り
+                            }
+                        }
+                        return alpha;
+                    }
+                    else
+                    {
+                        foreach (var item in children)
+                        {
+                            var nextBoard = board.AddStone(item.Row, item.Col, StoneType.Gote);
+                            var alphabeta = await AlphaBeta(nextBoard, StoneType.Gote, depth - 1, alpha, beta);
+                            beta = -beta < -alphabeta ? alphabeta : beta;
+                            if (alpha >= beta)
+                            {
+                                return alpha; //枝刈り
+                            }
+                        }
+                        return beta;
+                    }
+                }
+                #endregion
+                if (nextPlayer == StoneType.Sente)
+                {
+                    foreach (var item in children)
+                    {
+                        var nextBoard = board.AddStone(item.Row,item.Col,StoneType.Sente);
+                        var alphabeta = await AlphaBeta(nextBoard,StoneType.Sente,depth-1,alpha,beta);
+                        alpha = alpha > alphabeta ? alpha : alphabeta;
+                        if (alpha >= beta)
+                        {
+                            return beta; //枝刈り
+                        }
+                    }
+                    return alpha;
+                }
+                else
+                {
+                    foreach (var item in children)
+                    {
+                        var nextBoard = board.AddStone(item.Row, item.Col, StoneType.Gote);
+                        var alphabeta = await AlphaBeta(nextBoard, StoneType.Gote, depth - 1, alpha, beta);
+                        beta = -beta < -alphabeta ? alphabeta:beta;
+                        if (alpha >= beta)
+                        {
+                            return alpha; //枝刈り
+                        }
+                    }
+                    return beta;
+                }
             });
         }
         public int GetEval()
