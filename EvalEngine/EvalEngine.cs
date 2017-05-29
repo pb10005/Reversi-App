@@ -67,7 +67,7 @@ namespace EvalEngine
                 foreach (var item in children)
                 {
                     var nextBoard = board.AddStone(item.Row, item.Col, player);
-                    var res = await MiniMax(nextBoard, player, 3);
+                    var res = await MiniMax(nextBoard, player, 1);
                     countMap[item] = res;
                 }
                 if (player == StoneType.Sente)
