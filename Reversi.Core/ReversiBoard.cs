@@ -274,6 +274,17 @@ namespace Reversi.Core
                 throw new ArgumentException("非合法手です");
             }
         }
+        /// <summary>
+        /// 現在の盤面とまったく同じ盤面を返す
+        /// </summary>
+        /// <returns></returns>
+        public ReversiBoard Pass()
+        {
+            var res = new ReversiBoard();
+            res.black = black;
+            res.white = white;
+            return res;
+        }
         private ulong Reverse(ulong player,ulong opposite,ulong mov,Func<ulong,ulong>transfer)
         {
             ulong rev = 0;

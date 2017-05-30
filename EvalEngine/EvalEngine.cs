@@ -43,9 +43,7 @@ namespace EvalEngine
         }
         Dictionary<ReversiMove, int> countMap = new Dictionary<ReversiMove, int>();
         //探索の深さ
-        int depth = 5;
-        //探索の広さ
-        int breadth = 6;
+        const int depth = 4;
         StoneType currentPlayer;
         /// <summary>
         /// 盤の情報をもとに思考し、次の手を返す
@@ -67,7 +65,7 @@ namespace EvalEngine
                 foreach (var item in children)
                 {
                     var nextBoard = board.AddStone(item.Row, item.Col, player);
-                    var res = await AlphaBeta(nextBoard, player,4,int.MinValue,int.MaxValue);
+                    var res = await AlphaBeta(nextBoard, player,depth,int.MinValue,int.MaxValue);
                     countMap[item] = res;
                 }
                 if (player == StoneType.Sente)
@@ -180,12 +178,11 @@ namespace EvalEngine
                     {
                         return evaluator.Execute(board.BlackToMat(), board.WhiteToMat());
                     }
-                    return evaluator.Execute(board.BlackToMat(), board.WhiteToMat());
-                    if (player == StoneType.Sente)
+                    if (nextPlayer == StoneType.Sente)
                     {
                         foreach (var item in children)
                         {
-                            var nextBoard = board.AddStone(item.Row, item.Col, StoneType.Sente);
+                            var nextBoard = board.Pass();
                             var alphabeta = await AlphaBeta(nextBoard, StoneType.Sente, depth - 1, alpha, beta);
                             alpha = alpha > alphabeta ? alpha : alphabeta;
                             if (alpha >= beta)
@@ -199,7 +196,7 @@ namespace EvalEngine
                     {
                         foreach (var item in children)
                         {
-                            var nextBoard = board.AddStone(item.Row, item.Col, StoneType.Gote);
+                            var nextBoard = board.Pass();
                             var alphabeta = await AlphaBeta(nextBoard, StoneType.Gote, depth - 1, alpha, beta);
                             beta = beta > alphabeta ? alphabeta : beta;
                             if (alpha >= beta)

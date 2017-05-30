@@ -18,6 +18,7 @@ namespace Reversi.GUI
             InitializeComponent();
         }
         const int waitingTime = 200;
+        const string engineFolderPath = @"engines";
         const string enginePath = "engines.xml";
         #region フラグ
         bool inGame = false;
@@ -61,22 +62,41 @@ namespace Reversi.GUI
                     blocks[row, col] = block;
                 }
             }
-            //エンジンを読み込み
-            if (System.IO.File.Exists(enginePath))
+            if (System.IO.Directory.Exists(engineFolderPath))
             {
-                try
+                var engineDir = System.IO.Directory.GetFiles(engineFolderPath);
+                foreach (var item in engineDir)
                 {
-                    manager = EngineManager.FromFile(enginePath);
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(ex.Message,"読み込みエラー",MessageBoxButtons.OK,MessageBoxIcon.Error);
+                    try
+                    {
+                        manager.Register(item);
+                    }
+                    catch
+                    {
+
+                    }
                 }
             }
             else
             {
-                System.IO.File.Create(enginePath).Close();
+                System.IO.Directory.CreateDirectory(engineFolderPath);
             }
+            ////エンジンを読み込み
+            //if (System.IO.File.Exists(enginePath))
+            //{
+            //    try
+            //    {
+            //        manager = EngineManager.FromFile(enginePath);
+            //    }
+            //    catch (Exception ex)
+            //    {
+            //        MessageBox.Show(ex.Message,"読み込みエラー",MessageBoxButtons.OK,MessageBoxIcon.Error);
+            //    }
+            //}
+            //else
+            //{
+            //    System.IO.File.Create(enginePath).Close();
+            //}
         }
         private async void Init()
         {

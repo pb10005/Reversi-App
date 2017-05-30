@@ -34,7 +34,7 @@ namespace Reversi.GUI
                 {
                     manager.Register(dialog.FileName);
                 }
-                catch(ArgumentException ex)
+                catch(ArgumentException)
                 {
                     MessageBox.Show("既に登録されています", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
