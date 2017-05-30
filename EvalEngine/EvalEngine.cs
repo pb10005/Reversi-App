@@ -11,7 +11,7 @@ namespace EvalEngine
 {
     public class ThinkingEngine : IThinkingEngine
     {
-        Eval evaluator = FromParamsString("86,17,31,100,2,-85,-78,66,-34,-74,42,48,47,-99,56,16");
+        Eval evaluator = FromParamsString("34,-56,-29,56,-5,-100,-54,97,-23,-71,-27,26,51,-91,63,12,40,7,41,59,15,-100,-100,80,6,-86,62,54,-20,-73,83,-25,65,33,51,45,22,-76,-94,57,-84,-100,51,93,81,-66,96,-20,78,-25,49,79,65,-18,-89,53,-1,-68,30,53,19,-100,89,20");
         public Eval Evaluator
         {
             set
@@ -33,7 +33,7 @@ namespace EvalEngine
         {
             get
             {
-                return "Minmax";
+                return "アルファベータ";
             }
         }
 
@@ -97,7 +97,7 @@ namespace EvalEngine
             {
                 if (depth == 0)
                 {
-                    return evaluator.Execute(board.BlackToMat(), board.WhiteToMat());
+                    return evaluator.Execute(board);
                 }
                 int bestEval = player == StoneType.Sente ? int.MaxValue : int.MinValue;
                 var nextPlayer = player == StoneType.Sente ? StoneType.Gote : StoneType.Sente;
@@ -107,7 +107,7 @@ namespace EvalEngine
                     var passed = board.SearchLegalMoves(player);
                     if (passed.Count == 0)
                     {
-                        return evaluator.Execute(board.BlackToMat(), board.WhiteToMat());
+                        return evaluator.Execute(board);
                     }
                     foreach (var item in passed)
                     {
@@ -166,7 +166,7 @@ namespace EvalEngine
             {
                 if (depth == 0)
                 {
-                    return evaluator.Execute(board.BlackToMat(), board.WhiteToMat());
+                    return evaluator.Execute(board);
                 }
                 var nextPlayer = player == StoneType.Sente ? StoneType.Gote : StoneType.Sente;
                 var children = board.SearchLegalMoves(nextPlayer);
@@ -176,7 +176,7 @@ namespace EvalEngine
                     var passed = board.SearchLegalMoves(player);
                     if (passed.Count == 0)
                     {
-                        return evaluator.Execute(board.BlackToMat(), board.WhiteToMat());
+                        return evaluator.Execute(board);
                     }
                     if (nextPlayer == StoneType.Sente)
                     {
