@@ -11,6 +11,8 @@ namespace EvalEngine
 {
     public class ThinkingEngine : IThinkingEngine
     {
+        const int max =  9999;
+        const int min = -9999;
         Eval evaluator = FromParamsString("-23,-30,-53,-20,-58,-100,12,100,-5,-18,-45,58,52,-100,37,5,39,-39,-47,16,-62,-55,-54,-4,-2,-71,-4,41,29,-100,17,-66,84,64,-4,44,0,-37,-100,91,-52,-100,39,43,55,-100,100,-3,96,64,79,100,56,-28,-98,6,-26,-75,48,95,81,-59,100,70");
         public Eval Evaluator
         {
@@ -43,7 +45,7 @@ namespace EvalEngine
         }
         Dictionary<ReversiMove, int> countMap = new Dictionary<ReversiMove, int>();
         //探索の深さ
-        const int depth = 4;
+        const int depth = 5;
         StoneType currentPlayer;
         /// <summary>
         /// 盤の情報をもとに思考し、次の手を返す
@@ -85,81 +87,6 @@ namespace EvalEngine
 
         int best = 0;
         /// <summary>
-        /// ミニマックス法
-        /// </summary>
-        /// <param name="board"></param>
-        /// <param name="player"></param>
-        /// <param name="depth"></param>
-        /// <returns></returns>
-        public async Task<int> MiniMax(ReversiBoard board, StoneType player, int depth)
-        {
-            return await Task.Run(async () =>
-            {
-                if (depth == 0)
-                {
-                    return evaluator.Execute(board);
-                }
-                int bestEval = player == StoneType.Sente ? int.MaxValue : int.MinValue;
-                var nextPlayer = player == StoneType.Sente ? StoneType.Gote : StoneType.Sente;
-                var children = board.SearchLegalMoves(nextPlayer);
-                if (children.Count == 0)
-                {
-                    var passed = board.SearchLegalMoves(player);
-                    if (passed.Count == 0)
-                    {
-                        return evaluator.Execute(board);
-                    }
-                    foreach (var item in passed)
-                    {
-                        switch (player)
-                        {
-                            case StoneType.Sente:
-                                var val = await MiniMax(board.AddStone(item.Row, item.Col, StoneType.Sente), StoneType.Sente, depth - 1);
-                                if (bestEval < val)
-                                {
-                                    bestEval = val;
-                                }
-                                break;
-                            case StoneType.Gote:
-                                var val2 = await MiniMax(board.AddStone(item.Row, item.Col, StoneType.Gote), StoneType.Gote, depth - 1);
-                                if (-bestEval < -val2)
-                                {
-                                    bestEval = val2;
-                                }
-                                break;
-                            default:
-                                break;
-                        }
-                    }
-                }
-                foreach (var item in children)
-                {
-                    switch (nextPlayer)
-                    {
-                        case StoneType.None:
-                            break;
-                        case StoneType.Sente:
-                            var val = await MiniMax(board.AddStone(item.Row, item.Col, StoneType.Sente), StoneType.Sente, depth - 1);
-                            if (bestEval < val)
-                            {
-                                bestEval = val;
-                            }
-                            break;
-                        case StoneType.Gote:
-                            var val2 = await MiniMax(board.AddStone(item.Row, item.Col, StoneType.Gote), StoneType.Gote, depth - 1);
-                            if (-bestEval < -val2)
-                            {
-                                bestEval = val2;
-                            }
-                            break;
-                        default:
-                            break;
-                    }
-                }
-                return bestEval;
-            });
-        }
-        /// <summary>
         /// アルファベータ法
         /// </summary>
         /// <param name="board"></param>
@@ -189,11 +116,11 @@ namespace EvalEngine
                         var wh = board.NumOfWhite();
                         if (bl > wh)
                         {
-                            return int.MaxValue; //先手勝ち
+                            return max; //先手勝ち
                         }
                         else if (bl < wh)
                         {
-                            return int.MinValue; //後手勝ち
+                            return min; //後手勝ち
                         }
                         else
                         {
