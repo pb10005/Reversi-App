@@ -45,9 +45,10 @@ namespace EvalEngine
         {
             timeLimit = milliSecond;
         }
-        Dictionary<ReversiMove, int> countMap = new Dictionary<ReversiMove, int>();
+        Dictionary<ReversiMove, int> countMap = 
+                        new Dictionary<ReversiMove, int>();
         //探索の深さ
-        const int depth = 4;
+        const int depth = 5;
         int timeLimit;
         StoneType currentPlayer;
         /// <summary>
@@ -56,32 +57,42 @@ namespace EvalEngine
         /// <param name="board"></param>
         /// <param name="player"></param>
         /// <returns></returns>
-        public async Task<ReversiMove> Think(ReversiBoard board, StoneType player)
+        public async Task<ReversiMove> Think(
+                                    ReversiBoard board
+                                    , StoneType player)
         {
             currentPlayer = player;
             countMap = new Dictionary<ReversiMove, int>();
-            return await Task.Run(async () =>
+            return await Task.Run(() =>
             {
                 var children = board.SearchLegalMoves(player);
                 if (children.Count == 0)
                 {
                     throw new InvalidOperationException("合法手がありません");
                 }
-                foreach (var item in children)
+                Parallel.ForEach(children, item =>
                 {
-                    var nextBoard = board.AddStone(item.Row, item.Col, player);
-                    var res = await AlphaBeta(nextBoard, player, depth, int.MinValue,int.MaxValue);
-                    countMap[item] = res;
-                }
+                    countMap[item] = AlphaBeta(
+                                  board.AddStone(item.Row, item.Col, player)
+                                , player
+                                , depth
+                                , int.MinValue
+                                , int.MaxValue)
+                                .Result;
+                });
                 if (player == StoneType.Sente)
                 {
-                    var max = countMap.FirstOrDefault(x => x.Value == countMap.Values.Max());
+                    var max = countMap
+                        .FirstOrDefault(x =>
+                                    x.Value == countMap.Values.Max());
                     best = max.Value;
                     return max.Key;
                 }
                 else
                 {
-                    var min = countMap.FirstOrDefault(x => x.Value == countMap.Values.Min());
+                    var min = countMap
+                        .FirstOrDefault(x =>
+                                    x.Value == countMap.Values.Min());
                     best = min.Value;
                     return min.Key;
                 }
@@ -106,13 +117,13 @@ namespace EvalEngine
                 {
                     return evaluator.Execute(board);
                 }
-                var nextPlayer = player == StoneType.Sente ? StoneType.Gote : StoneType.Sente;
+                var nextPlayer = player == StoneType.Sente ? 
+                                    StoneType.Gote : StoneType.Sente;
                 var children = board.SearchLegalMoves(nextPlayer);
                 #region パス
                 if (children.Count == 0)
                 {
-                    var passed = board.SearchLegalMoves(player);
-                    if (passed.Count == 0)
+                    if (board.SearchLegalMoves(player).Count == 0)
                     {
                         //終了なので、勝敗を判定
                         var bl = board.NumOfBlack();
@@ -132,8 +143,12 @@ namespace EvalEngine
                     }
                     if (nextPlayer == StoneType.Sente)
                     {
-                        var nextBoard = board.Pass();
-                        var alphabeta = await AlphaBeta(nextBoard, StoneType.Sente, depth - 1, alpha, beta);
+                        var alphabeta = await AlphaBeta(
+                                                  board.Pass()
+                                                , StoneType.Sente
+                                                , depth - 1
+                                                , alpha
+                                                , beta);
                         alpha = alpha > alphabeta ? alpha : alphabeta;
                         if (alpha >= beta)
                         {
@@ -143,8 +158,12 @@ namespace EvalEngine
                     }
                     else
                     {
-                        var nextBoard = board.Pass();
-                        var alphabeta = await AlphaBeta(nextBoard, StoneType.Gote, depth - 1, alpha, beta);
+                        var alphabeta = await AlphaBeta(
+                                                  board.Pass()
+                                                , StoneType.Gote
+                                                , depth - 1
+                                                , alpha
+                                                , beta);
                         beta = beta > alphabeta ? alphabeta : beta;
                         if (alpha >= beta)
                         {
@@ -158,8 +177,15 @@ namespace EvalEngine
                 {
                     foreach (var item in children)
                     {
-                        var nextBoard = board.AddStone(item.Row,item.Col,StoneType.Sente);
-                        var alphabeta = await AlphaBeta(nextBoard,StoneType.Sente,depth-1,alpha,beta);
+                        var alphabeta = await AlphaBeta(
+                                                  board.AddStone(
+                                                      item.Row
+                                                    , item.Col
+                                                    , StoneType.Sente)
+                                                , StoneType.Sente
+                                                , depth-1
+                                                , alpha
+                                                , beta);
                         alpha = alpha > alphabeta ? alpha : alphabeta;
                         if (alpha >= beta)
                         {
@@ -172,8 +198,15 @@ namespace EvalEngine
                 {
                     foreach (var item in children)
                     {
-                        var nextBoard = board.AddStone(item.Row, item.Col, StoneType.Gote);
-                        var alphabeta = await AlphaBeta(nextBoard, StoneType.Gote, depth - 1, alpha, beta);
+                        var alphabeta = await AlphaBeta(
+                                                board.AddStone(
+                                                      item.Row
+                                                    , item.Col
+                                                    , StoneType.Gote)
+                                                , StoneType.Gote
+                                                , depth - 1
+                                                , alpha
+                                                , beta);
                         beta = beta > alphabeta ? alphabeta:beta;
                         if (alpha >= beta)
                         {
