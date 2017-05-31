@@ -25,6 +25,8 @@ namespace Reversi.GUI
         public bool GoteIsCom { get; set; }
         public string SenteName { get; private set; }
         public string GoteName { get; private set; }
+        public int SenteSecond { get; private set; } = 1000;
+        public int GoteSecond { get; private set; } = 1000;
         private void button1_Click(object sender, EventArgs e)
         {
             if (comboBox1.SelectedIndex == -1 || comboBox2.SelectedIndex == -1)
@@ -36,6 +38,10 @@ namespace Reversi.GUI
             {
                 SenteIsCom = true;
                 SenteName = comboBox1.Text;
+                if (textBox1.Text!="")
+                {
+                    SenteSecond = int.Parse(textBox1.Text);
+                }
             }
             else
             {
@@ -45,6 +51,10 @@ namespace Reversi.GUI
             {
                 GoteIsCom = true;
                 GoteName = comboBox2.Text;
+                if (textBox2.Text != "")
+                {
+                    GoteSecond = int.Parse(textBox2.Text);
+                }
             }
             else
             {

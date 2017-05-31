@@ -6,14 +6,16 @@ using System.Threading.Tasks;
 using Reversi.Core;
 using ThinkingEngineBase;
 using static EvalEngine.Eval;
+using System.Diagnostics;
+using System.Threading;
 
 namespace EvalEngine
 {
     public class ThinkingEngine : IThinkingEngine
     {
-        const int max =  9999;
-        const int min = -9999;
-        Eval evaluator = FromParamsString("-23,-30,-53,-20,-58,-100,12,100,-5,-18,-45,58,52,-100,37,5,39,-39,-47,16,-62,-55,-54,-4,-2,-71,-4,41,29,-100,17,-66,84,64,-4,44,0,-37,-100,91,-52,-100,39,43,55,-100,100,-3,96,64,79,100,56,-28,-98,6,-26,-75,48,95,81,-59,100,70");
+        const int max =  10000;
+        const int min = -10000;
+        Eval evaluator = FromParamsString("-39,-100,-81,-31,-100,-94,68,-59,95,-78,82,11,59,5,73,22,50,-100,1,37,-89,-47,27,-45,-43,-81,54,28,-29,-46,36,52,67,76,-30,51,53,-89,-74,72,-72,-75,41,-32,48,-33,38,47,-7,99,6,13,26,86,-99,8,-77,-80,12,4,85,-59,48,9");
         public Eval Evaluator
         {
             set
@@ -41,11 +43,12 @@ namespace EvalEngine
 
         public void SetTimeLimit(int milliSecond)
         {
-            throw new NotImplementedException();
+            timeLimit = milliSecond;
         }
         Dictionary<ReversiMove, int> countMap = new Dictionary<ReversiMove, int>();
         //探索の深さ
-        const int depth = 5;
+        const int depth = 4;
+        int timeLimit;
         StoneType currentPlayer;
         /// <summary>
         /// 盤の情報をもとに思考し、次の手を返す
@@ -67,7 +70,7 @@ namespace EvalEngine
                 foreach (var item in children)
                 {
                     var nextBoard = board.AddStone(item.Row, item.Col, player);
-                    var res = await AlphaBeta(nextBoard, player,depth,int.MinValue,int.MaxValue);
+                    var res = await AlphaBeta(nextBoard, player, depth, int.MinValue,int.MaxValue);
                     countMap[item] = res;
                 }
                 if (player == StoneType.Sente)
@@ -129,7 +132,7 @@ namespace EvalEngine
                     }
                     if (nextPlayer == StoneType.Sente)
                     {
-                        foreach (var item in children)
+                        foreach (var item in passed)
                         {
                             var nextBoard = board.Pass();
                             var alphabeta = await AlphaBeta(nextBoard, StoneType.Sente, depth - 1, alpha, beta);
@@ -143,7 +146,7 @@ namespace EvalEngine
                     }
                     else
                     {
-                        foreach (var item in children)
+                        foreach (var item in passed)
                         {
                             var nextBoard = board.Pass();
                             var alphabeta = await AlphaBeta(nextBoard, StoneType.Gote, depth - 1, alpha, beta);

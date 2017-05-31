@@ -21,11 +21,15 @@ namespace EvalEngine
             var res = new Eval();
             for (int itr = 0; itr < 4; itr++)
             {
+                var squareSum = 0.0;　//二乗和
+                var sum = 0.0;        //ただの和
                 for (int row = 0; row < 4; row++)
                 {
                     for (int col = 0; col < 4; col++)
                     {
                         var param = paramsArray[16 * itr + 4 * row + col];
+                        sum += param;
+                        squareSum += param * param;
 
                         res.evalBoard[row, col, itr] = param;
                         res.evalBoard[7 - row, col, itr] = param;
@@ -33,11 +37,15 @@ namespace EvalEngine
                         res.evalBoard[7 - row, 7 - col, itr] = param;
                     }
                 }
+                var average = sum / 16.0;　//平均
+                var stDev = Math.Sqrt(squareSum / 16.0 - average * average); //標準偏差
+                res.stDevs[itr] = stDev;
             }
-
+            
             return res;
         }
         private int[,,] evalBoard = new int[8, 8, 4];
+        private double[] stDevs = new double[4];
         public int Execute(Reversi.Core.ReversiBoard board)
         {
             var black = board.BlackToMat();
@@ -79,7 +87,7 @@ namespace EvalEngine
                     }
                 }
             }
-            return blackValue - whiteValue;
+            return (blackValue - whiteValue) * 100/(int)stDevs[itr]; //評価値を標準化
         }
     }
 }

@@ -213,10 +213,18 @@ namespace Reversi.GUI
                 if (senteIsCom)
                 {
                     senteEngine = manager.EngineMap[dialog.SenteName];
+                    if (dialog.SenteSecond != default(int))
+                    {
+                        senteEngine.SetTimeLimit(dialog.SenteSecond * 1000);
+                    }
                 }
                 if (goteIsCom)
                 {
                     goteEngine = manager.EngineMap[dialog.GoteName];
+                    if (dialog.GoteSecond != default(int))
+                    {
+                        goteEngine.SetTimeLimit(dialog.GoteSecond * 1000);
+                    }
                 }
                 Init();
             }
