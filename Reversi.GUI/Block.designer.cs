@@ -34,7 +34,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BackColor = System.Drawing.Color.Transparent;
+            this.BackColor = System.Drawing.Color.ForestGreen;
             this.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.Margin = new System.Windows.Forms.Padding(1);
             this.Name = "Block";
