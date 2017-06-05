@@ -15,6 +15,11 @@ namespace EvalEngine
         {
 
         }
+        /// <summary>
+        /// 文字列から評価関数を生成
+        /// </summary>
+        /// <param name="paramsString"></param>
+        /// <returns></returns>
         public static Eval FromParamsString(string paramsString)
         {
             var paramsArray = paramsString.Split(',').Select(y => int.Parse(y)).ToArray();
@@ -45,7 +50,12 @@ namespace EvalEngine
             return res;
         }
         private int[,,] evalBoard = new int[8, 8, 4];
-        private double[] stDevs = new double[4];
+        private double[] stDevs = new double[4];　//各パラメータの標準偏差を格納　意味があるかは不明
+        /// <summary>
+        /// 盤面を評価
+        /// </summary>
+        /// <param name="board"></param>
+        /// <returns></returns>
         public int Execute(Reversi.Core.ReversiBoard board)
         {
             var black = board.BlackToMat();
