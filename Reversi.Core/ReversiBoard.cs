@@ -39,19 +39,13 @@ namespace Reversi.Core
         /// <returns></returns>
         public static ReversiBoard InitBoard()
         {
-            var res = new ReversiBoard()
-            {
-                //オセロの初期状態
-                black = 0x0000000810000000,
-                white = 0x0000001008000000
-            };
+            var res = new ReversiBoard(0x0000000810000000, 0x0000001008000000);
             return res;
         }
         #endregion
 
-        ulong black = 0;
-        ulong white = 0;
-        StoneType player = StoneType.None;
+        readonly ulong black = 0;
+        readonly ulong white = 0;
 
         #region 出力
         /// <summary>
@@ -222,10 +216,9 @@ namespace Reversi.Core
         /// <returns></returns>
         public ReversiBoard AddStone(int row,int col,StoneType player)
         {
-            this.player = player;
             ulong pl = 0;
             ulong opp = 0;
-            switch (this.player)
+            switch (player)
             {
                 case StoneType.None:
                     break;
@@ -257,17 +250,12 @@ namespace Reversi.Core
                 switch (player)
                 {
                     case StoneType.Sente:
-                        board.black = pl;
-                        board.white = opp;
-                        break;
+                        return new ReversiBoard(pl, opp);
                     case StoneType.Gote:
-                        board.black = opp;
-                        board.white = pl;
-                        break;
+                        return new ReversiBoard(opp, pl);
                     default:
-                        break;
+                        throw new InvalidOperationException();
                 }
-                return board;
             }
             else
             {
@@ -280,9 +268,7 @@ namespace Reversi.Core
         /// <returns></returns>
         public ReversiBoard Pass()
         {
-            var res = new ReversiBoard();
-            res.black = black;
-            res.white = white;
+            var res = new ReversiBoard(black, white);
             return res;
         }
         private ulong Reverse(ulong player,ulong opposite,ulong mov,Func<ulong,ulong>transfer)
