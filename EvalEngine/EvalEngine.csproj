@@ -48,6 +48,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Eval.cs" />
+    <Compile Include="EvalBoard.cs" />
     <Compile Include="EvalEngine.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

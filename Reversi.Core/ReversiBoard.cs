@@ -47,6 +47,20 @@ namespace Reversi.Core
         readonly ulong black = 0;
         readonly ulong white = 0;
 
+        public ulong Black
+        {
+            get
+            {
+                return black;
+            }
+        }
+        public ulong White
+        {
+            get
+            {
+                return white;
+            }
+        }
         #region 出力
         /// <summary>
         /// 黒のbitboardを、boolの2次元配列に変換して返す
