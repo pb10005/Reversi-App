@@ -19,7 +19,7 @@ namespace EvalEngine
         int timeLimit;
         StoneType currentPlayer;
         int best = 0;
-        Dictionary<EvalBoard, int> evals = new Dictionary<EvalBoard, int>();
+        readonly Dictionary<EvalBoard, int> evals = new Dictionary<EvalBoard, int>();
 
         Eval evaluator = Eval.FromParamsString("62,-26,-100,-48,1,-100,93,-91,41,-9,7,-12,12,8,14,-30,-10,-54,24,25,-42,-81,-2,-12,-94,-70,4,26,-13,-100,32,-6,66,74,-57,31,-34,0,-100,46,-62,-65,35,61,71,-43,33,-30,36,74,83,3,100,100,-57,-26,-2,-39,-8,81,51,-72,22,11");
         /// <summary>
@@ -76,7 +76,17 @@ namespace EvalEngine
                 {
                     throw new InvalidOperationException("合法手がありません");
                 }
-                Parallel.ForEach(children, item =>
+                foreach (var item in children)
+                {
+                    countMap[item] = AlphaBeta(
+                                  board.AddStone(item.Row, item.Col, player)
+                                , player
+                                , depth
+                                , int.MinValue
+                                , int.MaxValue)
+                                .Result;
+                }
+                /*Parallel.ForEach(children, item =>
                 {
                     //並列化でCPUをめいっぱい使える
                     //それなりに速くなる
@@ -87,7 +97,7 @@ namespace EvalEngine
                                 , int.MinValue
                                 , int.MaxValue)
                                 .Result;
-                });
+                });*/
                 if (player == StoneType.Sente)
                 {
                     var max = countMap
@@ -120,18 +130,27 @@ namespace EvalEngine
         {
             return await Task.Run(async () =>
             {
-                if(evals.ContainsKey(new EvalBoard(board.Black, board.White)))
+                var b = new EvalBoard(board.Black, board.White);
+                if (evals.ContainsKey(b))
                 {
-                    return evals[new EvalBoard(board.Black, board.White)];
+                    return evals[b];
                 }
                 else if (depth == 0)
                 {
                     //探索の終端
-                    var res = evaluator.Execute(board);
-                    var b = new EvalBoard(board.Black, board.White);
                     if (!evals.ContainsKey(b))
-                        evals.Add(b,res);
-                    return res;
+                    {
+                        evals[b] = evaluator.Execute(board);
+                        return evals[b];
+                    }
+                    else if(evals.ContainsKey(b))
+                    {
+                        return evals[b];
+                    }
+                    else
+                    {
+                        throw new InvalidOperationException("到達しないコード");
+                    }
                 }
                 var nextPlayer = player == StoneType.Sente ? 
                                     StoneType.Gote : StoneType.Sente;
